@@ -1,0 +1,20 @@
+{
+    "type": "em",
+    "group": "Core",
+    "name": "vortex.modules.builtin.packages",
+    "proper_name": "Packages",
+    "auto_exec": true,
+    "version": "1.1.0",
+    "author": "Infinite Tech",
+    "contributors": [
+        "Diego E. Moreno <d@infinite.si>"
+    ],
+    "deps": [
+    ],
+    "compatibility": [
+        "1.0"
+    ],
+    "path": "./build/libplugin.so",
+    "picture": "./assets/logo.png",
+    "description": "This is a packages module for Vortex, it provide everything to configure et compile packages tarballs"
+}
