@@ -1,11 +1,11 @@
 {
     "type": "em",
-    "group": "Core",
-    "name": "vortex.modules.builtin.packages",
-    "proper_name": "Packages",
+    "group": "Basic tools",
+    "name": "infinitehq.text_edit",
+    "proper_name": "TextEdit",
     "auto_exec": true,
-    "version": "1.1.0",
-    "author": "Infinite Tech",
+    "version": "1.0.0",
+    "author": "Infinite",
     "contributors": [
         "Diego E. Moreno <d@infinite.si>"
     ],
@@ -14,7 +14,7 @@
     "compatibility": [
         "1.0"
     ],
-    "path": "./build/libplugin.so",
+    "path": "./build/libmodule.so",
     "picture": "./assets/logo.png",
-    "description": "This is a packages module for Vortex, it provide everything to configure et compile packages tarballs"
+    "description": "A simple text file editor"
 }
