@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(module)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC")
+
+if (MSVC)
+    add_compile_options(/utf-8)
+endif()
 find_library(VORTEX_SHARED_LIBRARY vortex_shared HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/build/)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/lib/spdlog/include")
@@ -10,10 +18,13 @@ if(NOT VORTEX_SHARED_LIBRARY)
 endif()
 
 file(GLOB_RECURSE SOURCES main/*.cpp)
+find_package(Vulkan REQUIRED)
+include_directories(${Vulkan_INCLUDE_DIRS})
 
 add_library(module SHARED ${SOURCES})
+if(UNIX AND NOT APPLE)
 target_compile_options(module PRIVATE -Wall -Wextra)
-
+endif()
 target_link_libraries(module PRIVATE ${VORTEX_SHARED_LIBRARY})
 target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/main/include/)
 target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/)
