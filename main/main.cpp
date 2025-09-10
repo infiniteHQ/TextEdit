@@ -7,13 +7,6 @@ SampleCppModule::Context *CSampleModule = NULL;
 
 class Module : public ModuleInterface {
 public:
-  /**
-   * @brief Executes the module's main functionality.
-   *
-   * This function is called to execute the main functionality of the module.
-   * It creates the context pointer for the module, retrieves the interface
-   * pointer, adds functions and events, and executes the main function.
-   */
   void execute() override {
     // Create the context pointer of this module
     SampleCppModule::CreateContext();
@@ -21,10 +14,6 @@ public:
     // Get the interface pointer (for GUI launcher, from other modules)
     CSampleModule->m_interface =
         ModuleInterface::GetEditorModuleByName(this->m_name);
-
-    std::shared_ptr<SampleAppWindow> m_MainWindow =
-        SampleAppWindow::Create("Super window");
-    // this->SetMainWindow(m_MainWindow->GetAppWindow());
 
     // Adding functions
     this->AddFunction(SampleCppModule::HelloWorld, "HelloWorld");
@@ -35,6 +24,10 @@ public:
     this->AddOutputEvent(SampleCppModule::OutputHandleHello,
                          "OutputHandleHello");
     this->AddInputEvent(SampleCppModule::InputHello, "InputHello");
+
+    this->AddContentBrowserItemHandler(ItemHandlerInterface(
+        "file_txt", SampleCppModule::StartTextEditorInstance,
+        "Edit this file"));
 
     {
       ArgumentValues values("{\"name\":\"hohoho\"}");
