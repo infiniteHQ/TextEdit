@@ -450,12 +450,22 @@ private:
 class TextAreaComponent : public Component {
 public:
   TextAreaComponent(const Cherry::Identifier &id, float *width, float *height,
-                    const std::string &buffer)
-      : Component(id), m_Width(width), m_Height(height), m_TextEditor(buffer) {
+                    std::string *buffer)
+      : Component(id), m_Width(width), m_Height(height), m_TextEditor("temp"),
+        m_EditBuffer(buffer) {
     // Identifier
     SetIdentifier(id);
     // Colors
     SetProperty("color_text", "theme:text_area_color_text");
+    SetProperty("undo_pending", "false");
+    SetProperty("redo_pending", "false");
+    SetProperty("save_pending", "false");
+    SetProperty("refresh_pending", "false");
+    SetData("save_ready", "false");
+
+    if (buffer) {
+      m_TextEditor.SetText(*buffer);
+    }
   }
 
   void Render() override {
@@ -463,6 +473,35 @@ public:
       return;
     }
     Cherry::PushFont("FiraCode");
+
+    if (GetProperty("refresh_pending") == "true") {
+      if (m_EditBuffer) {
+        m_TextEditor.SetText(*m_EditBuffer);
+      }
+      SetProperty("refresh_pending", "false");
+    }
+
+    if (GetProperty("save_pending") == "true") {
+      if (m_EditBuffer) {
+        *m_EditBuffer = m_TextEditor.GetText();
+        SetData("save_ready", "true");
+      }
+      SetProperty("save_pending", "false");
+    }
+
+    if (GetPropertyAs<bool>("undo_pending")) {
+      if (m_TextEditor.CanUndo()) {
+        m_TextEditor.Undo();
+      }
+      SetProperty("undo_pending", false);
+    }
+
+    if (GetPropertyAs<bool>("redo_pending")) {
+      if (m_TextEditor.CanRedo()) {
+        m_TextEditor.Redo();
+      }
+      SetProperty("redo_pending", false);
+    }
 
     m_TextEditor.render();
 
@@ -473,16 +512,16 @@ private:
   float *m_Width;
   float *m_Height;
   TextEditorCore m_TextEditor;
+  std::string *m_EditBuffer;
 };
 
 inline Component &TextArea(const Identifier &identifier, float *width,
-                           float *height, const std::string &buffer) {
+                           float *height, std::string *buffer) {
   return CherryApp.PushComponent<TextAreaComponent>(identifier, width, height,
                                                     buffer);
 }
 
-inline Component &TextArea(float *width, float *height,
-                           const std::string &buffer) {
+inline Component &TextArea(float *width, float *height, std::string *buffer) {
   return ModuleUI::TextArea(
       Application::GenerateUniqueID(width, height, buffer, "TextArea"), width,
       height, buffer);

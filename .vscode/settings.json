@@ -89,6 +89,7 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "modules_utility-hpp": "cpp"
+        "modules_utility-hpp": "cpp",
+        "filesystem": "cpp"
     }
 }

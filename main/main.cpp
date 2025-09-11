@@ -29,6 +29,9 @@ public:
         "file_txt", SampleCppModule::StartTextEditorInstance,
         "Edit this file"));
 
+    // this->SetContentBrowserSaveAllCallback();
+    // AddMainSettingsEntry
+
     {
       ArgumentValues values("{\"name\":\"hohoho\"}");
       ReturnValues ret;

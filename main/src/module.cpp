@@ -14,12 +14,7 @@ void SampleCppModule::OutputHandleHello() {
 }
 
 void SampleCppModule::StartTextEditorInstance(const std::string &path) {
-  std::cout << "Called for path : " << path << std::endl;
-  std::string label =
-      "Text editor ####Logs utility-" +
-      std::to_string(CSampleModule->m_text_editor_instances.size() + 1);
-
-  auto inst = ModuleUI::TextEditorAppWindow::Create(label, path);
+  auto inst = ModuleUI::TextEditorAppWindow::Create(path);
   Cherry::AddAppWindow(inst->GetAppWindow());
   CSampleModule->m_text_editor_instances.push_back(inst);
 }
