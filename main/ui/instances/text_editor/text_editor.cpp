@@ -15,9 +15,11 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path) {
   if (filename.size() > maxLen) {
     filename = filename.substr(0, maxLen - 3) + "...";
   }
-
+  m_Type = detect_file(path);
   m_AppWindow = std::make_shared<Cherry::AppWindow>(filename, filename);
-  m_AppWindow->SetIcon(SampleCppModule::GetPath("/resources/test.png"));
+  std::string image_name = GetFileTypeStr(m_Type) + ".png";
+  m_AppWindow->SetIcon(
+      SampleCppModule::GetPath("/resources/files/" + image_name));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
 
@@ -27,6 +29,46 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path) {
   RefreshFile();
 
   this->ctx = VortexMaker::GetCurrentContext();
+}
+
+std::string TextEditorAppWindow::GetFileTypeStr(FileTypes type) {
+  switch (type) {
+  // Web and Markup
+  case FileTypes::File_XML:
+    return "file_xml";
+
+  // Config
+  case FileTypes::File_CFG:
+    return "file_cfg";
+  case FileTypes::File_JSON:
+    return "file_json";
+  case FileTypes::File_YAML:
+    return "file_yaml";
+  case FileTypes::File_INI:
+    return "file_ini";
+
+  // Documents
+  case FileTypes::File_TXT:
+    return "file_txt";
+  case FileTypes::File_MD:
+    return "file_md";
+
+  // Miscellaneous
+  case FileTypes::File_LOG:
+    return "file_log";
+  case FileTypes::File_BACKUP:
+    return "file_backup";
+  case FileTypes::File_TEMP:
+    return "file_temp";
+  case FileTypes::File_DATA:
+    return "file_data";
+
+  // Other
+  case FileTypes::File_UNKNOWN:
+    return "file_unknown";
+  }
+
+  return "file_unknown"; // fallback
 }
 
 std::shared_ptr<Cherry::AppWindow> &TextEditorAppWindow::GetAppWindow() {
@@ -56,7 +98,7 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("padding_x", "10.0f");
 
   if (CherryKit::ButtonImageText(
-          "Save", GetPath("resources/imgs/icons/misc/icon_add.png"))
+          "Save", SampleCppModule::GetPath("/resources/icons/icon_save.png"))
           .GetDataAs<bool>("isClicked")) {
     m_SavePending = true;
   }
@@ -64,7 +106,8 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
   if (CherryKit::ButtonImageText(
-          "Refresh", GetPath("resources/imgs/icons/misc/icon_add.png"))
+          "Refresh",
+          SampleCppModule::GetPath("/resources/icons/icon_refresh.png"))
           .GetDataAs<bool>("isClicked")) {
     m_RefreshReady = true;
   }
@@ -207,6 +250,40 @@ void TextEditorAppWindow::SaveFile() {
 
 void TextEditorAppWindow::Undo() { m_UndoPending = true; }
 void TextEditorAppWindow::Redo() { m_RedoPending = true; }
+
+FileTypes TextEditorAppWindow::detect_file(const std::string &path) {
+  static const std::unordered_map<std::string, FileTypes> extension_map = {
+      // Web and Markup
+      {"xml", FileTypes::File_XML},
+      {"json", FileTypes::File_JSON},
+      {"yaml", FileTypes::File_YAML},
+      {"yml", FileTypes::File_YAML},
+
+      // Config
+      {"cfg", FileTypes::File_CFG},
+      {"ini", FileTypes::File_INI},
+      {"env", FileTypes::File_INI},
+
+      // Documents
+      {"txt", FileTypes::File_TXT},
+      {"md", FileTypes::File_MD},
+      {"rst", FileTypes::File_MD},
+
+      // Miscellaneous
+      {"log", FileTypes::File_LOG},
+      {"bak", FileTypes::File_BACKUP},
+      {"tmp", FileTypes::File_TEMP},
+      {"dat", FileTypes::File_DATA},
+  };
+
+  std::string extension = get_extension(path);
+  auto it = extension_map.find(extension);
+  if (it != extension_map.end()) {
+    return it->second;
+  } else {
+    return FileTypes::File_UNKNOWN;
+  }
+}
 
 void TextEditorAppWindow::Render() {
   CherryApp.PushComponentPool(&m_ComponentPool);
