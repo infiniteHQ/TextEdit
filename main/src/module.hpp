@@ -33,6 +33,7 @@ SAMPLE_MODULE_API void FunctionWithArgRet(ArgumentValues &val,
                                           ReturnValues &ret);
 SAMPLE_MODULE_API void OutputHandleHello();
 SAMPLE_MODULE_API void InputHello();
+SAMPLE_MODULE_API std::string GetPath(const std::string &path);
 
 SAMPLE_MODULE_API void StartTextEditorInstance(const std::string &path);
 } // namespace SampleCppModule

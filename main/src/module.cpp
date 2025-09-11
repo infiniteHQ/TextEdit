@@ -29,6 +29,10 @@ void SampleCppModule::FunctionWithArg(ArgumentValues &arg) {
             << arg.GetJsonValue()["name"].get<std::string>() << std::endl;
 }
 
+std::string SampleCppModule::GetPath(const std::string &path) {
+  return CSampleModule->m_interface->GetPath() + path;
+}
+
 void SampleCppModule::FunctionWithRet(ReturnValues &ret) {
   // Set the return value (time for this example)
   ret.SetJsonValue(nlohmann::json::parse("{\"time\":\"current\"}"));

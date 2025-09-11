@@ -1,4 +1,5 @@
 #include "text_editor.hpp"
+#include "../../../src/module.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -16,7 +17,7 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path) {
   }
 
   m_AppWindow = std::make_shared<Cherry::AppWindow>(filename, filename);
-  m_AppWindow->SetIcon("/usr/local/include/Vortex/imgs/vortex.png");
+  m_AppWindow->SetIcon(SampleCppModule::GetPath("/resources/test.png"));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
 
