@@ -26,6 +26,7 @@ extern SAMPLE_MODULE_API SampleCppModule::Context
 // The code API of the module.
 namespace SampleCppModule {
 SAMPLE_MODULE_API void CreateContext();
+SAMPLE_MODULE_API void DestroyContext();
 SAMPLE_MODULE_API void HelloWorld();
 SAMPLE_MODULE_API void FunctionWithArg(ArgumentValues &val);
 SAMPLE_MODULE_API void FunctionWithRet(ReturnValues &ret);

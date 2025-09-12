@@ -5,6 +5,8 @@ void SampleCppModule::CreateContext() {
   CSampleModule = ctx;
 }
 
+void SampleCppModule::DestroyContext() { VX_FREE(CSampleModule); }
+
 void SampleCppModule::HelloWorld() {
   std::cout << "Hello Vortex World !!" << std::endl;
 }
@@ -14,7 +16,18 @@ void SampleCppModule::OutputHandleHello() {
 }
 
 void SampleCppModule::StartTextEditorInstance(const std::string &path) {
-  auto inst = ModuleUI::TextEditorAppWindow::Create(path);
+  std::string filename = fs::path(path).filename().string();
+
+  const size_t maxLen = 24;
+  if (filename.size() > maxLen) {
+    filename = filename.substr(0, maxLen - 3) + "...";
+  }
+
+  std::string window_name =
+      filename + "####" +
+      std::to_string(CSampleModule->m_text_editor_instances.size());
+
+  auto inst = ModuleUI::TextEditorAppWindow::Create(path, window_name);
   Cherry::AddAppWindow(inst->GetAppWindow());
   CSampleModule->m_text_editor_instances.push_back(inst);
 }
@@ -30,7 +43,7 @@ void SampleCppModule::FunctionWithArg(ArgumentValues &arg) {
 }
 
 std::string SampleCppModule::GetPath(const std::string &path) {
-  return CSampleModule->m_interface->GetPath() + path;
+  return CSampleModule->m_interface->GetPath() + "/" + path;
 }
 
 void SampleCppModule::FunctionWithRet(ReturnValues &ret) {

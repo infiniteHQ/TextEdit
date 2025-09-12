@@ -6,22 +6,18 @@
 #include <string>
 
 namespace ModuleUI {
-TextEditorAppWindow::TextEditorAppWindow(const std::string &path) {
+TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
+                                         const std::string &name) {
   namespace fs = std::filesystem;
 
-  std::string filename = fs::path(path).filename().string();
-
-  const size_t maxLen = 24;
-  if (filename.size() > maxLen) {
-    filename = filename.substr(0, maxLen - 3) + "...";
-  }
   m_Type = detect_file(path);
-  m_AppWindow = std::make_shared<Cherry::AppWindow>(filename, filename);
+  m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
   std::string image_name = GetFileTypeStr(m_Type) + ".png";
   m_AppWindow->SetIcon(
       SampleCppModule::GetPath("/resources/files/" + image_name));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
+  m_AppWindow->SetSaveMode(true);
 
   std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
   m_FilePath = path;
@@ -76,9 +72,9 @@ std::shared_ptr<Cherry::AppWindow> &TextEditorAppWindow::GetAppWindow() {
 }
 
 std::shared_ptr<TextEditorAppWindow>
-TextEditorAppWindow::Create(const std::string &path) {
+TextEditorAppWindow::Create(const std::string &path, const std::string &name) {
   auto instance =
-      std::shared_ptr<TextEditorAppWindow>(new TextEditorAppWindow(path));
+      std::shared_ptr<TextEditorAppWindow>(new TextEditorAppWindow(path, name));
   instance->SetupRenderCallback();
   return instance;
 }
@@ -97,10 +93,18 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
 
+  if (!m_FileEdited) {
+    CherryGUI::BeginDisabled();
+  }
+
   if (CherryKit::ButtonImageText(
           "Save", SampleCppModule::GetPath("/resources/icons/icon_save.png"))
           .GetDataAs<bool>("isClicked")) {
     m_SavePending = true;
+  }
+
+  if (!m_FileEdited) {
+    CherryGUI::EndDisabled();
   }
 
   CherryNextComponent.SetProperty("padding_y", "6.0f");
@@ -118,6 +122,8 @@ void TextEditorAppWindow::RenderMenubar() {
 }
 
 void TextEditorAppWindow::RefreshFile() {
+  m_FileEdited = false;
+  m_FileUpdated = true;
   try {
     if (m_FilePath.empty()) {
       std::cerr << "RefreshFile: no file path set\n";
@@ -162,6 +168,8 @@ void TextEditorAppWindow::RefreshFile() {
 }
 
 void TextEditorAppWindow::SaveFile() {
+  m_FileEdited = false;
+  m_FileUpdated = true;
   try {
     if (m_FilePath.empty()) {
       std::cerr << "SaveFile: no file path set\n";
@@ -290,6 +298,20 @@ void TextEditorAppWindow::Render() {
 
   auto test = CherryGUI::GetContentRegionAvail();
   auto &editor = ModuleUI::TextArea(&test.x, &test.y, &m_FileEditBuffer);
+
+  if (!m_FileUpdated) {
+    if (editor.GetDataAs<bool>("text_changed")) {
+      m_FileEdited = true;
+    }
+  } else {
+    m_FileUpdated = false;
+  }
+
+  if (m_FileEdited) {
+    this->m_AppWindow->SetSaved(false);
+  } else {
+    this->m_AppWindow->SetSaved(true);
+  }
 
   if (editor.GetData("save_ready") == "true") {
     m_SaveReady = true;

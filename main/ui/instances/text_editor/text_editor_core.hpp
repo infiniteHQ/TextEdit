@@ -461,7 +461,9 @@ public:
     SetProperty("redo_pending", "false");
     SetProperty("save_pending", "false");
     SetProperty("refresh_pending", "false");
+
     SetData("save_ready", "false");
+    SetData("text_changed", false);
 
     if (buffer) {
       m_TextEditor.SetText(*buffer);
@@ -479,6 +481,12 @@ public:
         m_TextEditor.SetText(*m_EditBuffer);
       }
       SetProperty("refresh_pending", "false");
+    }
+
+    if (m_TextEditor.IsTextChanged()) {
+      SetData("text_changed", true);
+    } else {
+      SetData("text_changed", false);
     }
 
     if (GetProperty("save_pending") == "true") {
