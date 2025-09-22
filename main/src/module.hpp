@@ -37,6 +37,7 @@ SAMPLE_MODULE_API void InputHello();
 SAMPLE_MODULE_API std::string GetPath(const std::string &path);
 
 SAMPLE_MODULE_API void StartTextEditorInstance(const std::string &path);
+SAMPLE_MODULE_API bool IsValidFile(const std::string &path);
 } // namespace SampleCppModule
 
 #endif // SAMPLE_MODULE_HPP

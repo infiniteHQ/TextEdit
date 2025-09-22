@@ -15,6 +15,23 @@ void SampleCppModule::OutputHandleHello() {
   std::cout << "Handling the HEllow output event...." << std::endl;
 }
 
+bool SampleCppModule::IsValidFile(const std::string &path) {
+  namespace fs = std::filesystem;
+
+  if (!fs::is_directory(path)) {
+    return false;
+  }
+
+  for (const auto &entry : fs::directory_iterator(path)) {
+    if (entry.is_regular_file() &&
+        entry.path().filename() == "SampleConfig.txt") {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void SampleCppModule::StartTextEditorInstance(const std::string &path) {
   std::string filename = fs::path(path).filename().string();
 

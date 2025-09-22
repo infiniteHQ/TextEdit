@@ -30,6 +30,15 @@ public:
         "Edit this txt file",
         SampleCppModule::GetPath("resources/icons/edit.png")));
 
+    this->AddContentBrowserItemHandler(ItemHandlerInterface(
+        "text_edit:superfile", SampleCppModule::StartTextEditorInstance,
+        "Super Edit", "Edit this txt file",
+        SampleCppModule::GetPath("resources/icons/edit.png")));
+
+    this->AddContentBrowserItemIdentifier(ItemIdentifierInterface(
+        SampleCppModule::IsValidFile, "text_edit:superfile", "Super file",
+        "#553333"));
+
     // SetContentBrowserSaveAllCallback();
     // AddMainSettingsEntry()
     // AddContentBrowserCreationPossibility();
