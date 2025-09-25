@@ -308,7 +308,7 @@ void TextEditorCore::AddUndo(UndoRecord &aValue) {
 
 TextEditorCore::Coordinates
 TextEditorCore::ScreenPosToCoordinates(const ImVec2 &aPosition) const {
-  ImVec2 origin = ImGui::GetCursorScreenPos();
+  ImVec2 origin = CherryGUI::GetCursorScreenPos();
   ImVec2 local(aPosition.x - origin.x, aPosition.y - origin.y);
 
   int lineNo = (std::max)(0, (int)floor(local.y / mCharAdvance.y));
@@ -326,8 +326,7 @@ TextEditorCore::ScreenPosToCoordinates(const ImVec2 &aPosition) const {
 
       if (line[columnIndex].mChar == '\t') {
         float spaceSize =
-            ImGui::GetFont()
-                ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, " ")
+            CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, " ")
                 .x;
         float oldX = columnX;
         float newColumnX = (1.0f + std::floor((1.0f + columnX) /
@@ -347,8 +346,7 @@ TextEditorCore::ScreenPosToCoordinates(const ImVec2 &aPosition) const {
           buf[i++] = line[columnIndex++].mChar;
         buf[i] = '\0';
         columnWidth =
-            ImGui::GetFont()
-                ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, buf)
+            CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, buf)
                 .x;
         if (mTextStart + columnX + columnWidth * 0.5f > local.x)
           break;
@@ -658,88 +656,88 @@ ImU32 TextEditorCore::GetGlyphColor(const Glyph &aGlyph) const {
 }
 
 void TextEditorCore::HandleKeyboardInputs() {
-  ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO &io = CherryGUI::GetIO();
   auto shift = io.KeyShift;
   auto ctrl = io.ConfigMacOSXBehaviors ? io.KeySuper : io.KeyCtrl;
   auto alt = io.ConfigMacOSXBehaviors ? io.KeyCtrl : io.KeyAlt;
-  if (ImGui::IsWindowFocused()) {
-    if (ImGui::IsWindowHovered())
-      ImGui::SetMouseCursor(
-          ImGuiMouseCursor_TextInput); // ImGui::CaptureKeyboardFromApp(true);
+  if (CherryGUI::IsWindowFocused()) {
+    if (CherryGUI::IsWindowHovered())
+      CherryGUI::SetMouseCursor(
+          ImGuiMouseCursor_TextInput); // CherryGUI::CaptureKeyboardFromApp(true);
     io.WantCaptureKeyboard = true;
     io.WantTextInput = true;
     if (!IsReadOnly() && ctrl && !shift && !alt &&
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
+        CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Z)))
       Undo();
     else if (!IsReadOnly() && !ctrl && !shift && alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Backspace)))
       Undo();
     else if (!IsReadOnly() && ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Y)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Y)))
       Redo();
     else if (!ctrl && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_UpArrow)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_UpArrow)))
       MoveUp(1, shift);
     else if (!ctrl && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_DownArrow)))
       MoveDown(1, shift);
     else if (!alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_LeftArrow)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_LeftArrow)))
       MoveLeft(1, shift, ctrl);
     else if (!alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_RightArrow)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_RightArrow)))
       MoveRight(1, shift, ctrl);
-    else if (!alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_PageUp)))
+    else if (!alt && CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_PageUp)))
       MoveUp(GetPageSize() - 4, shift);
-    else if (!alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_PageDown)))
+    else if (!alt && CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_PageDown)))
       MoveDown(GetPageSize() - 4, shift);
     else if (!alt && ctrl &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Home)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Home)))
       MoveTop(shift);
     else if (ctrl && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_End)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_End)))
       MoveBottom(shift);
     else if (!ctrl && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Home)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Home)))
       MoveHome(shift);
     else if (!ctrl && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_End)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_End)))
       MoveEnd(shift);
     else if (!IsReadOnly() && !ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Delete)))
       Delete();
     else if (!IsReadOnly() && !ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Backspace)))
       Backspace();
     else if (!ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Insert)))
       mOverwrite ^= true;
     else if (ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Insert)))
       Copy();
     else if (ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_C)))
       Copy();
     else if (!IsReadOnly() && !ctrl && shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Insert)))
       Paste();
     else if (!IsReadOnly() && ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_V)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_V)))
       Paste();
     else if (ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_X)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_X)))
       Cut();
     else if (!ctrl && shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Delete)))
       Cut();
     else if (ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_A)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_A)))
       SelectAll();
     else if (!IsReadOnly() && !ctrl && !shift && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Enter)))
       EnterCharacter('\n', false);
     else if (!IsReadOnly() && !ctrl && !alt &&
-             ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Tab)))
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Tab)))
       EnterCharacter('\t', shift);
     if (!IsReadOnly() && !io.InputQueueCharacters.empty()) {
       for (int i = 0; i < io.InputQueueCharacters.Size; i++) {
@@ -747,21 +745,22 @@ void TextEditorCore::HandleKeyboardInputs() {
         if (c != 0 && (c == '\n' || c >= 32))
           EnterCharacter(c, shift);
       }
-      io.InputQueueCharacters.resize(0);
+CherryGUI::ClearInputQueueCharacters(io);
     }
   }
 }
+
 void TextEditorCore::HandleMouseInputs() {
-  ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO &io = CherryGUI::GetIO();
   auto shift = io.KeyShift;
   auto ctrl = io.ConfigMacOSXBehaviors ? io.KeySuper : io.KeyCtrl;
   auto alt = io.ConfigMacOSXBehaviors ? io.KeyCtrl : io.KeyAlt;
 
-  if (ImGui::IsWindowHovered()) {
+  if (CherryGUI::IsWindowHovered()) {
     if (!shift && !alt) {
-      auto click = ImGui::IsMouseClicked(0);
-      auto doubleClick = ImGui::IsMouseDoubleClicked(0);
-      auto t = ImGui::GetTime();
+      auto click = CherryGUI::IsMouseClicked(0);
+      auto doubleClick = CherryGUI::IsMouseDoubleClicked(0);
+      auto t = CherryGUI::GetTime();
       auto tripleClick =
           click && !doubleClick &&
           (mLastClick != -1.0f && (t - mLastClick) < io.MouseDoubleClickTime);
@@ -773,7 +772,7 @@ void TextEditorCore::HandleMouseInputs() {
       if (tripleClick) {
         if (!ctrl) {
           mState.mCursorPosition = mInteractiveStart = mInteractiveEnd =
-              ScreenPosToCoordinates(ImGui::GetMousePos());
+              ScreenPosToCoordinates(CherryGUI::GetMousePos());
           mSelectionMode = SelectionMode::Line;
           SetSelection(mInteractiveStart, mInteractiveEnd, mSelectionMode);
         }
@@ -788,7 +787,7 @@ void TextEditorCore::HandleMouseInputs() {
       else if (doubleClick) {
         if (!ctrl) {
           mState.mCursorPosition = mInteractiveStart = mInteractiveEnd =
-              ScreenPosToCoordinates(ImGui::GetMousePos());
+              ScreenPosToCoordinates(CherryGUI::GetMousePos());
           if (mSelectionMode == SelectionMode::Line)
             mSelectionMode = SelectionMode::Normal;
           else
@@ -796,7 +795,7 @@ void TextEditorCore::HandleMouseInputs() {
           SetSelection(mInteractiveStart, mInteractiveEnd, mSelectionMode);
         }
 
-        mLastClick = (float)ImGui::GetTime();
+        mLastClick = (float)CherryGUI::GetTime();
       }
 
       /*
@@ -804,20 +803,20 @@ void TextEditorCore::HandleMouseInputs() {
       */
       else if (click) {
         mState.mCursorPosition = mInteractiveStart = mInteractiveEnd =
-            ScreenPosToCoordinates(ImGui::GetMousePos());
+            ScreenPosToCoordinates(CherryGUI::GetMousePos());
         if (ctrl)
           mSelectionMode = SelectionMode::Word;
         else
           mSelectionMode = SelectionMode::Normal;
         SetSelection(mInteractiveStart, mInteractiveEnd, mSelectionMode);
 
-        mLastClick = (float)ImGui::GetTime();
+        mLastClick = (float)CherryGUI::GetTime();
       }
       // Mouse left button dragging (=> update selection)
-      else if (ImGui::IsMouseDragging(0) && ImGui::IsMouseDown(0)) {
+      else if (CherryGUI::IsMouseDragging(0) && CherryGUI::IsMouseDown(0)) {
         io.WantCaptureMouse = true;
         mState.mCursorPosition = mInteractiveEnd =
-            ScreenPosToCoordinates(ImGui::GetMousePos());
+            ScreenPosToCoordinates(CherryGUI::GetMousePos());
         SetSelection(mInteractiveStart, mInteractiveEnd, mSelectionMode);
       }
     }
@@ -827,34 +826,33 @@ void TextEditorCore::HandleMouseInputs() {
 void TextEditorCore::Render() {
 
   /* Compute mCharAdvance regarding to scaled font size (Ctrl + mouse wheel)*/
-  const float fontSize = ImGui::GetFont()
-                             ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX,
+  const float fontSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX,
                                              -1.0f, "#", nullptr, nullptr)
                              .x;
   mCharAdvance =
-      ImVec2(fontSize, ImGui::GetTextLineHeightWithSpacing() * mLineSpacing);
+      ImVec2(fontSize, CherryGUI::GetTextLineHeightWithSpacing() * mLineSpacing);
 
   /* Update palette with the current alpha from style */
   for (int i = 0; i < (int)PaletteIndex::Max; ++i) {
-    auto color = ImGui::ColorConvertU32ToFloat4(mPaletteBase[i]);
-    color.w *= ImGui::GetStyle().Alpha;
-    mPalette[i] = ImGui::ColorConvertFloat4ToU32(color);
+    auto color = CherryGUI::ColorConvertU32ToFloat4(mPaletteBase[i]);
+    color.w *= CherryGUI::GetStyle().Alpha;
+    mPalette[i] = CherryGUI::ColorConvertFloat4ToU32(color);
   }
 
   assert(mLineBuffer.empty());
 
-  auto contentSize = ImGui::GetWindowContentRegionMax();
-  auto drawList = ImGui::GetWindowDrawList();
+  auto contentSize = CherryGUI::GetWindowContentRegionMax();
+  auto drawList = CherryGUI::GetWindowDrawList();
   float longest(mTextStart);
 
   if (mScrollToTop) {
     mScrollToTop = false;
-    ImGui::SetScrollY(0.f);
+    CherryGUI::SetScrollY(0.f);
   }
 
-  ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
-  auto scrollX = ImGui::GetScrollX();
-  auto scrollY = ImGui::GetScrollY();
+  ImVec2 cursorScreenPos = CherryGUI::GetCursorScreenPos();
+  auto scrollX = CherryGUI::GetScrollX();
+  auto scrollY = CherryGUI::GetScrollY();
 
   auto lineNo = (int)floor(scrollY / mCharAdvance.y);
   auto globalLineMax = (int)mLines.size();
@@ -867,15 +865,13 @@ void TextEditorCore::Render() {
   // spaces as text width
   char buf[16];
   snprintf(buf, 16, " %d ", globalLineMax);
-  mTextStart = ImGui::GetFont()
-                   ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, buf,
+  mTextStart = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, buf,
                                    nullptr, nullptr)
                    .x +
                mLeftMargin;
 
   if (!mLines.empty()) {
-    float spaceSize = ImGui::GetFont()
-                          ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f,
+    float spaceSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
                                           " ", nullptr, nullptr)
                           .x;
 
@@ -915,7 +911,7 @@ void TextEditorCore::Render() {
                       lineStartScreenPos.y);
         ImVec2 vend(lineStartScreenPos.x + mTextStart + ssend,
                     lineStartScreenPos.y + mCharAdvance.y);
-        drawList->AddRectFilled(vstart, vend,
+        CherryGUI::AddRectFilled(drawList, vstart, vend,
                                 mPalette[(int)PaletteIndex::Selection]);
       }
 
@@ -925,7 +921,7 @@ void TextEditorCore::Render() {
       if (mBreakpoints.count(lineNo + 1) != 0) {
         auto end = ImVec2(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX,
                           lineStartScreenPos.y + mCharAdvance.y);
-        drawList->AddRectFilled(start, end,
+        CherryGUI::AddRectFilled(drawList, start, end,
                                 mPalette[(int)PaletteIndex::Breakpoint]);
       }
 
@@ -934,45 +930,44 @@ void TextEditorCore::Render() {
       if (errorIt != mErrorMarkers.end()) {
         auto end = ImVec2(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX,
                           lineStartScreenPos.y + mCharAdvance.y);
-        drawList->AddRectFilled(start, end,
+        CherryGUI::AddRectFilled(drawList, start, end,
                                 mPalette[(int)PaletteIndex::ErrorMarker]);
 
-        if (ImGui::IsMouseHoveringRect(lineStartScreenPos, end)) {
-          ImGui::BeginTooltip();
-          ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-          ImGui::Text("Error at line %d:", errorIt->first);
-          ImGui::PopStyleColor();
-          ImGui::Separator();
-          ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.2f, 1.0f));
-          ImGui::Text("%s", errorIt->second.c_str());
-          ImGui::PopStyleColor();
-          ImGui::EndTooltip();
+        if (CherryGUI::IsMouseHoveringRect(lineStartScreenPos, end)) {
+          CherryGUI::BeginTooltip();
+          CherryGUI::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+          CherryGUI::Text("Error at line %d:", errorIt->first);
+          CherryGUI::PopStyleColor();
+          CherryGUI::Separator();
+          CherryGUI::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.2f, 1.0f));
+          CherryGUI::Text("%s", errorIt->second.c_str());
+          CherryGUI::PopStyleColor();
+          CherryGUI::EndTooltip();
         }
       }
 
       // Draw line number (right aligned)
       snprintf(buf, 16, "%d  ", lineNo + 1);
 
-      auto lineNoWidth = ImGui::GetFont()
-                             ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX,
+      auto lineNoWidth = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX,
                                              -1.0f, buf, nullptr, nullptr)
                              .x;
-      drawList->AddText(ImVec2(lineStartScreenPos.x + mTextStart - lineNoWidth,
+      CherryGUI::AddText(drawList, ImVec2(lineStartScreenPos.x + mTextStart - lineNoWidth,
                                lineStartScreenPos.y),
                         mPalette[(int)PaletteIndex::LineNumber], buf);
 
       if (mState.mCursorPosition.mLine == lineNo) {
-        auto focused = ImGui::IsWindowFocused();
+        auto focused = CherryGUI::IsWindowFocused();
 
         // Highlight the current line (where the cursor is)
         if (!HasSelection()) {
           auto end = ImVec2(start.x + contentSize.x + scrollX,
                             start.y + mCharAdvance.y);
-          drawList->AddRectFilled(
+          CherryGUI::AddRectFilled(drawList, 
               start, end,
               mPalette[(int)(focused ? PaletteIndex::CurrentLineFill
                                      : PaletteIndex::CurrentLineFillInactive)]);
-          drawList->AddRect(start, end,
+          CherryGUI::AddRect(drawList, start, end,
                             mPalette[(int)PaletteIndex::CurrentLineEdge], 1.0f);
         }
 
@@ -999,8 +994,7 @@ void TextEditorCore::Render() {
                 char buf2[2];
                 buf2[0] = line[cindex].mChar;
                 buf2[1] = '\0';
-                width = ImGui::GetFont()
-                            ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX,
+                width = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX,
                                             -1.0f, buf2)
                             .x;
               }
@@ -1008,7 +1002,7 @@ void TextEditorCore::Render() {
             ImVec2 cstart(textScreenPos.x + cx, lineStartScreenPos.y);
             ImVec2 cend(textScreenPos.x + cx + width,
                         lineStartScreenPos.y + mCharAdvance.y);
-            drawList->AddRectFilled(cstart, cend,
+            CherryGUI::AddRectFilled(drawList, cstart, cend,
                                     mPalette[(int)PaletteIndex::Cursor]);
             if (elapsed > 800)
               mStartTime = timeEnd;
@@ -1029,9 +1023,8 @@ void TextEditorCore::Render() {
             !mLineBuffer.empty()) {
           const ImVec2 newOffset(textScreenPos.x + bufferOffset.x,
                                  textScreenPos.y + bufferOffset.y);
-          drawList->AddText(newOffset, prevColor, mLineBuffer.c_str());
-          auto textSize = ImGui::GetFont()->CalcTextSizeA(
-              ImGui::GetFontSize(), FLT_MAX, -1.0f, mLineBuffer.c_str(),
+          CherryGUI::AddText(drawList, newOffset, prevColor, mLineBuffer.c_str());
+          auto textSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, mLineBuffer.c_str(),
               nullptr, nullptr);
           bufferOffset.x += textSize.x;
           mLineBuffer.clear();
@@ -1046,7 +1039,7 @@ void TextEditorCore::Render() {
           ++i;
 
           if (mShowWhitespaces) {
-            const auto s = ImGui::GetFontSize();
+            const auto s = CherryGUI::GetFontSize();
             const auto x1 = textScreenPos.x + oldX + 1.0f;
             const auto x2 = textScreenPos.x + bufferOffset.x - 1.0f;
             const auto y = textScreenPos.y + bufferOffset.y + s * 0.5f;
@@ -1054,16 +1047,16 @@ void TextEditorCore::Render() {
             const ImVec2 p2(x2, y);
             const ImVec2 p3(x2 - s * 0.2f, y - s * 0.2f);
             const ImVec2 p4(x2 - s * 0.2f, y + s * 0.2f);
-            drawList->AddLine(p1, p2, 0x90909090);
-            drawList->AddLine(p2, p3, 0x90909090);
-            drawList->AddLine(p2, p4, 0x90909090);
+            CherryGUI::AddLine(drawList, p1, p2, 0x90909090);
+            CherryGUI::AddLine(drawList, p2, p3, 0x90909090);
+            CherryGUI::AddLine(drawList, p2, p4, 0x90909090);
           }
         } else if (glyph.mChar == ' ') {
           if (mShowWhitespaces) {
-            const auto s = ImGui::GetFontSize();
+            const auto s = CherryGUI::GetFontSize();
             const auto x = textScreenPos.x + bufferOffset.x + spaceSize * 0.5f;
             const auto y = textScreenPos.y + bufferOffset.y + s * 0.5f;
-            drawList->AddCircleFilled(ImVec2(x, y), 1.5f, 0x80808080, 4);
+            CherryGUI::AddCircleFilled(drawList, ImVec2(x, y), 1.5f, 0x80808080, 4);
           }
           bufferOffset.x += spaceSize;
           i++;
@@ -1078,7 +1071,7 @@ void TextEditorCore::Render() {
       if (!mLineBuffer.empty()) {
         const ImVec2 newOffset(textScreenPos.x + bufferOffset.x,
                                textScreenPos.y + bufferOffset.y);
-        drawList->AddText(newOffset, prevColor, mLineBuffer.c_str());
+        CherryGUI::AddText(drawList, newOffset, prevColor, mLineBuffer.c_str());
         mLineBuffer.clear();
       }
 
@@ -1086,31 +1079,31 @@ void TextEditorCore::Render() {
     }
 
     // Draw a tooltip on known identifiers/preprocessor symbols
-    if (ImGui::IsMousePosValid()) {
-      auto id = GetWordAt(ScreenPosToCoordinates(ImGui::GetMousePos()));
+    if (CherryGUI::IsMousePosValid()) {
+      auto id = GetWordAt(ScreenPosToCoordinates(CherryGUI::GetMousePos()));
       if (!id.empty()) {
         auto it = mLanguageDefinition.mIdentifiers.find(id);
         if (it != mLanguageDefinition.mIdentifiers.end()) {
-          ImGui::BeginTooltip();
-          ImGui::TextUnformatted(it->second.mDeclaration.c_str());
-          ImGui::EndTooltip();
+          CherryGUI::BeginTooltip();
+          CherryGUI::TextUnformatted(it->second.mDeclaration.c_str());
+          CherryGUI::EndTooltip();
         } else {
           auto pi = mLanguageDefinition.mPreprocIdentifiers.find(id);
           if (pi != mLanguageDefinition.mPreprocIdentifiers.end()) {
-            ImGui::BeginTooltip();
-            ImGui::TextUnformatted(pi->second.mDeclaration.c_str());
-            ImGui::EndTooltip();
+            CherryGUI::BeginTooltip();
+            CherryGUI::TextUnformatted(pi->second.mDeclaration.c_str());
+            CherryGUI::EndTooltip();
           }
         }
       }
     }
   }
 
-  ImGui::Dummy(ImVec2((longest + 2), mLines.size() * mCharAdvance.y));
+  CherryGUI::Dummy(ImVec2((longest + 2), mLines.size() * mCharAdvance.y));
 
   if (mScrollToCursor) {
     EnsureCursorVisible();
-    ImGui::SetWindowFocus();
+    CherryGUI::SetWindowFocus();
     mScrollToCursor = false;
   }
 }
@@ -1121,23 +1114,23 @@ void TextEditorCore::Render(const char *aTitle, const ImVec2 &aSize,
   mTextChanged = false;
   mCursorPositionChanged = false;
 
-  ImGui::PushStyleColor(
+  CherryGUI::PushStyleColor(
       ImGuiCol_ChildBg,
-      ImGui::ColorConvertU32ToFloat4(mPalette[(int)PaletteIndex::Background]));
-  ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-  ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-  ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+      CherryGUI::ColorConvertU32ToFloat4(mPalette[(int)PaletteIndex::Background]));
+  CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+  CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+  CherryGUI::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
+  CherryGUI::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+  CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
   if (!mIgnoreImGuiChild)
-    ImGui::BeginChild(aTitle, aSize, aBorder,
+    CherryGUI::BeginChild(aTitle, aSize, aBorder,
                       ImGuiWindowFlags_HorizontalScrollbar |
                           ImGuiWindowFlags_AlwaysHorizontalScrollbar |
                           ImGuiWindowFlags_NoMove);
 
   if (mHandleKeyboardInputs) {
     HandleKeyboardInputs();
-    ImGui::PushAllowKeyboardFocus(true);
+    CherryGUI::PushAllowKeyboardFocus(true);
   }
 
   if (mHandleMouseInputs)
@@ -1148,13 +1141,13 @@ void TextEditorCore::Render(const char *aTitle, const ImVec2 &aSize,
   Render();
 
   if (mHandleKeyboardInputs)
-    ImGui::PopAllowKeyboardFocus();
+    CherryGUI::PopAllowKeyboardFocus();
 
   if (!mIgnoreImGuiChild)
-    ImGui::EndChild();
+    CherryGUI::EndChild();
 
-  ImGui::PopStyleVar(4);
-  ImGui::PopStyleColor(2);
+  CherryGUI::PopStyleVar(4);
+  CherryGUI::PopStyleColor(2);
 
   mWithinRender = false;
 }
@@ -1829,14 +1822,14 @@ bool TextEditorCore::HasSelection() const {
 
 void TextEditorCore::Copy() {
   if (HasSelection()) {
-    ImGui::SetClipboardText(GetSelectedText().c_str());
+    CherryGUI::SetClipboardText(GetSelectedText().c_str());
   } else {
     if (!mLines.empty()) {
       std::string str;
       auto &line = mLines[GetActualCursorCoordinates().mLine];
       for (auto &g : line)
         str.push_back(g.mChar);
-      ImGui::SetClipboardText(str.c_str());
+      CherryGUI::SetClipboardText(str.c_str());
     }
   }
 }
@@ -1865,7 +1858,7 @@ void TextEditorCore::Paste() {
   if (IsReadOnly())
     return;
 
-  auto clipText = ImGui::GetClipboardText();
+  auto clipText = CherryGUI::GetClipboardText();
   if (clipText != nullptr && strlen(clipText) > 0) {
     UndoRecord u;
     u.mBefore = mState;
@@ -2259,8 +2252,7 @@ void TextEditorCore::ColorizeInternal() {
 float TextEditorCore::TextDistanceToLineStart(const Coordinates &aFrom) const {
   auto &line = mLines[aFrom.mLine];
   float distance = 0.0f;
-  float spaceSize = ImGui::GetFont()
-                        ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f,
+  float spaceSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
                                         " ", nullptr, nullptr)
                         .x;
   int colIndex = GetCharacterIndex(aFrom);
@@ -2278,8 +2270,7 @@ float TextEditorCore::TextDistanceToLineStart(const Coordinates &aFrom) const {
         tempCString[i] = line[it].mChar;
 
       tempCString[i] = '\0';
-      distance += ImGui::GetFont()
-                      ->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f,
+      distance += CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
                                       tempCString, nullptr, nullptr)
                       .x;
     }
@@ -2294,11 +2285,11 @@ void TextEditorCore::EnsureCursorVisible() {
     return;
   }
 
-  float scrollX = ImGui::GetScrollX();
-  float scrollY = ImGui::GetScrollY();
+  float scrollX = CherryGUI::GetScrollX();
+  float scrollY = CherryGUI::GetScrollY();
 
-  auto height = ImGui::GetWindowHeight();
-  auto width = ImGui::GetWindowWidth();
+  auto height = CherryGUI::GetWindowHeight();
+  auto width = CherryGUI::GetWindowWidth();
 
   auto top = 1 + (int)ceil(scrollY / mCharAdvance.y);
   auto bottom = (int)ceil((scrollY + height) / mCharAdvance.y);
@@ -2310,18 +2301,18 @@ void TextEditorCore::EnsureCursorVisible() {
   auto len = TextDistanceToLineStart(pos);
 
   if (pos.mLine < top)
-    ImGui::SetScrollY((std::max)(0.0f, (pos.mLine - 1) * mCharAdvance.y));
+    CherryGUI::SetScrollY((std::max)(0.0f, (pos.mLine - 1) * mCharAdvance.y));
   if (pos.mLine > bottom - 4)
-    ImGui::SetScrollY(
+    CherryGUI::SetScrollY(
         (std::max)(0.0f, (pos.mLine + 4) * mCharAdvance.y - height));
   if (len + mTextStart < left + 4)
-    ImGui::SetScrollX((std::max)(0.0f, len + mTextStart - 4));
+    CherryGUI::SetScrollX((std::max)(0.0f, len + mTextStart - 4));
   if (len + mTextStart > right - 4)
-    ImGui::SetScrollX((std::max)(0.0f, len + mTextStart + 4 - width));
+    CherryGUI::SetScrollX((std::max)(0.0f, len + mTextStart + 4 - width));
 }
 
 int TextEditorCore::GetPageSize() const {
-  auto height = ImGui::GetWindowHeight() - 20.0f;
+  auto height = CherryGUI::GetWindowHeight() - 20.0f;
   return (int)floor(height / mCharAdvance.y);
 }
 
