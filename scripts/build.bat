@@ -16,7 +16,7 @@ for /f %%i in ('powershell -command "(Get-WmiObject -Class Win32_Processor).Numb
 cmake --build . --config Release -- /m:%THREADS%
 cmake --install . --config Release
 
-cd ..
+cd ..\scripts
 
 for /f "tokens=*" %%A in ('powershell -command "Get-Content ../module.json | ConvertFrom-Json | Select-Object -Property name,version | ForEach-Object { $_.name + ' ' + $_.version }"') do (
     for /f "tokens=1,2" %%B in ("%%A") do (
@@ -25,18 +25,16 @@ for /f "tokens=*" %%A in ('powershell -command "Get-Content ../module.json | Con
     )
 )
 
-set FOLDER_NAME=%NAME%-%VERSION%
+mkdir ..\dist
 
-mkdir ..\dist\%FOLDER_NAME%
+xcopy ..\build ..\dist\build /E /I /Y
+xcopy ..\lib ..\dist\lib /E /I /Y 2>nul
+xcopy ..\assets ..\dist\assets /E /I /Y 2>nul
+copy ..\module.json ..\dist\module.json /Y
 
-xcopy ..\build ..\dist\%FOLDER_NAME%\build /E /I /Y
-xcopy ..\lib ..\dist\%FOLDER_NAME%\lib /E /I /Y 2>nul
-xcopy ..\assets ..\dist\%FOLDER_NAME%\assets /E /I /Y 2>nul
-copy ..\module.json ..\dist\%FOLDER_NAME%\module.json /Y
-
-rd /s /q ..\dist\%FOLDER_NAME%\build\CMakeFiles 2>nul
-rd /s /q ..\dist\%FOLDER_NAME%\scripts 2>nul
-rd /s /q ..\dist\%FOLDER_NAME%\.git 2>nul
-rd /s /q ..\dist\%FOLDER_NAME%\.vscode 2>nul
-rd /s /q ..\dist\%FOLDER_NAME%\lib 2>nul
-del /q ..\dist\%FOLDER_NAME%\buil_
+rd /s /q ..\dist\build\CMakeFiles 2>nul
+rd /s /q ..\dist\scripts 2>nul
+rd /s /q ..\dist\.git 2>nul
+rd /s /q ..\dist\.vscode 2>nul
+rd /s /q ..\dist\lib 2>nul
+del /q ..\dist\buil_

@@ -1,14 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
-mkdir ..\lib\vortex\tests\project\.vx\modules 2>nul
-
-xcopy /E /I /Y ..\build\dist\* ..\lib\vortex\tests\project\.vx\modules >nul
+rmdir /s /q "..\lib\vortex\tests\project\.vx\modules"
+mkdir "..\lib\vortex\tests\project\.vx\modules\dist"
+xcopy /E /I /Y "..\dist\*" "..\lib\vortex\tests\project\.vx\modules\dist\" >nul
 
 set /p VERSION=<"..\version.conf"
 
 set SCRIPT_DIR=%~dp0
-
 set VORTEX_PATH=%SCRIPT_DIR%..\lib\vortex\build\dist\%VERSION%\bin
 set PROJECT_PATH=%SCRIPT_DIR%..\lib\vortex\tests\project
 
