@@ -1,7 +1,7 @@
 {
     "type": "em",
     "group": "Basic tools",
-    "name": "infinitehq.text_edit",
+    "name": "infinitehq.textedit",
     "proper_name": "TextEdit",
     "auto_exec": true,
     "version": "1.0.0",

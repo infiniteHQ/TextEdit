@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC")
 if (MSVC)
     add_compile_options(/utf-8)
 endif()
+
 find_library(VORTEX_SHARED_LIBRARY vortex_shared HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/)
 find_library(CHERRY_SHARED_LIBRARY cherry imgui HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/)
 
@@ -30,7 +31,7 @@ if(UNIX AND NOT APPLE)
 target_compile_options(module PRIVATE -Wall -Wextra)
 endif()
 target_link_libraries(module PRIVATE ${VORTEX_SHARED_LIBRARY} ${CHERRY_SHARED_LIBRARY})
-target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/main/include/)
+target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/vxcore/include/)
 target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/)
 
 file(GLOB_RECURSE ASSET_FILES

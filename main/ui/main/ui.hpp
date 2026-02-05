@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../lib/vortex/lib/cherry/cherry.hpp"
-#include "../../../lib/vortex/main/include/vortex.h"
-#include "../../../lib/vortex/main/include/vortex_internals.h"
+#include <vxcore/include/vortex.h>
+#include <vxcore/include/vortex_internals.h>
 
 #ifndef UI_HPP
 #define UI_HPP

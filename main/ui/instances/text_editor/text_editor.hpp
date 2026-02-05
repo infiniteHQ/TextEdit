@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../../lib/vortex/main/include/vortex.h"
-#include "../../../../lib/vortex/main/include/vortex_internals.h"
 #include "text_editor_core.hpp"
+#include <vxcore/include/vortex.h>
+#include <vxcore/include/vortex_internals.h>
 
 #ifndef TEXT_EDITOR_HPP
 #define TEXT_EDITOR_HPP

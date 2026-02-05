@@ -3,8 +3,9 @@
 #include "../../../../lib/vortex/lib/cherry/cherry.hpp"
 #include "../../../../lib/vortex/lib/cherry/platform/engine/app/app.hpp"
 #include "../../../../lib/vortex/lib/cherry/platform/engine/components/components.hpp"
-#include "../../../../lib/vortex/main/include/vortex.h"
-#include "../../../../lib/vortex/main/include/vortex_internals.h"
+
+#include <vxcore/include/vortex.h>
+#include <vxcore/include/vortex_internals.h>
 
 #include <algorithm>
 #include <array>
