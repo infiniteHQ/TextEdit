@@ -91,8 +91,8 @@ public:
 };
 
 #ifdef _WIN32
-extern "C" __declspec(dllexport) ModuleInterface* create_em() {
-    return new Module();
+extern "C" __declspec(dllexport) ModuleInterface *create_em() {
+  return new Module();
 }
 #else
 extern "C" ModuleInterface *create_em() { return new Module(); }

@@ -14,7 +14,7 @@
     "compatibility": [
         "1.0"
     ],
-    "path": "./build/libmodule.so",
-    "picture": "./assets/logo.png",
+    "path": "./libmodule.so",
+    "picture": "./resources/test.png",
     "description": "A simple text file editor"
 }

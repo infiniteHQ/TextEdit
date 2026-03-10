@@ -19,9 +19,9 @@ FOLDER_NAME="$NAME-$VERSION"
 
 mkdir -p "../dist/$FOLDER_NAME"
 
-cp -r ../build ../dist/$FOLDER_NAME/
+cp -r ../build/* ../dist/$FOLDER_NAME/
 cp -r ../lib ../dist/$FOLDER_NAME/ 2>/dev/null || true
-cp -r ../assets ../dist/$FOLDER_NAME/ 2>/dev/null || true
+cp -r ../assets/* ../dist/$FOLDER_NAME/ 2>/dev/null || true
 cp ../module.json ../dist/$FOLDER_NAME/
 
 rm -rf "../dist/$FOLDER_NAME/build/CMakeFiles"
@@ -39,4 +39,4 @@ rm "../dist/$FOLDER_NAME/CMakeLists.txt" 2>/dev/null || true
 TAR_NAME="../build/$FOLDER_NAME.tar.gz"
 tar -czf "$TAR_NAME" -C ../dist "$FOLDER_NAME"
 
-echo "Archive créée : $TAR_NAME"
+echo "Archive created : $TAR_NAME"

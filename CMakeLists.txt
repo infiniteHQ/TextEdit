@@ -59,7 +59,7 @@ add_custom_target(sync_assets_editor ALL
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/remove_resources_if_exists.cmake
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/assets
-        $<TARGET_FILE_DIR:module>/resources
+        $<TARGET_FILE_DIR:module>/
     COMMAND ${CMAKE_COMMAND} -E echo "Assets synchronized."
     DEPENDS ${ASSET_FILES} module
 )

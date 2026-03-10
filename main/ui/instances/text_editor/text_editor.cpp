@@ -381,6 +381,7 @@ void TextEditorAppWindow::RenderRightMenubar() {
     CherryGUI::SetNextWindowPos(mousePos, ImGuiCond_Appearing);
     CherryGUI::OpenPopup("SettingsMenuPopup");
   }
+
   if (CherryGUI::BeginPopup("SettingsMenuPopup")) {
     CherryKit::CheckboxText("Auto refresh", &m_AutoRefresh);
     CherryGUI::EndPopup();
