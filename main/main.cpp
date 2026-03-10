@@ -1,43 +1,39 @@
 #include "./src/module.hpp"
 #include "./ui/main/ui.hpp"
 
-#ifndef CSampleModule
-SampleCppModule::Context *CSampleModule = NULL;
+#ifndef CTextEdit
+TextEdit::Context *CTextEdit = NULL;
 #endif
 
 class Module : public ModuleInterface {
 public:
   void execute() override {
     // Create the context pointer of this module
-    SampleCppModule::CreateContext();
+    TextEdit::CreateContext();
 
     // Get the interface pointer (for GUI launcher, from other modules)
-    CSampleModule->m_interface =
+    CTextEdit->m_interface =
         ModuleInterface::GetEditorModuleByName(this->m_name);
 
     // Adding functions
-    this->AddFunction(SampleCppModule::HelloWorld, "HelloWorld");
-    this->AddFunction(SampleCppModule::FunctionWithArg, "Arg");
-    this->AddFunction(SampleCppModule::FunctionWithArgRet, "ArgRet");
-    this->AddFunction(SampleCppModule::FunctionWithRet, "Ret");
+    this->AddFunction(TextEdit::HelloWorld, "HelloWorld");
+    this->AddFunction(TextEdit::FunctionWithArg, "Arg");
+    this->AddFunction(TextEdit::FunctionWithArgRet, "ArgRet");
+    this->AddFunction(TextEdit::FunctionWithRet, "Ret");
 
-    this->AddOutputEvent(SampleCppModule::OutputHandleHello,
-                         "OutputHandleHello");
-    this->AddInputEvent(SampleCppModule::InputHello, "InputHello");
-
-    this->AddContentBrowserItemHandler(ItemHandlerInterface(
-        "file_txt", SampleCppModule::StartTextEditorInstance, "Edit",
-        "Edit this txt file",
-        SampleCppModule::GetPath("resources/icons/edit.png")));
+    this->AddOutputEvent(TextEdit::OutputHandleHello, "OutputHandleHello");
+    this->AddInputEvent(TextEdit::InputHello, "InputHello");
 
     this->AddContentBrowserItemHandler(ItemHandlerInterface(
-        "text_edit:superfile", SampleCppModule::StartTextEditorInstance,
-        "Super Edit", "Edit this txt file",
-        SampleCppModule::GetPath("resources/icons/edit.png")));
+        "file_txt", TextEdit::StartTextEditorInstance, "Edit",
+        "Edit this txt file", TextEdit::GetPath("resources/icons/edit.png")));
+
+    this->AddContentBrowserItemHandler(ItemHandlerInterface(
+        "text_edit:superfile", TextEdit::StartTextEditorInstance, "Super Edit",
+        "Edit this txt file", TextEdit::GetPath("resources/icons/edit.png")));
 
     this->AddContentBrowserItemIdentifier(ItemIdentifierInterface(
-        SampleCppModule::IsValidFile, "text_edit:superfile", "Super file",
-        "#553333"));
+        TextEdit::IsValidFile, "text_edit:superfile", "Super file", "#553333"));
 
     // SetContentBrowserSaveAllCallback();
     // AddMainSettingsEntry()
@@ -81,7 +77,7 @@ public:
     this->ResetModule();
 
     // Clear windows
-    for (auto i : CSampleModule->m_text_editor_instances) {
+    for (auto i : CTextEdit->m_text_editor_instances) {
       CherryApp.DeleteAppWindow(i->GetAppWindow());
     }
 

@@ -1,21 +1,21 @@
 #include "module.hpp"
 
-void SampleCppModule::CreateContext() {
-  SampleCppModule::Context *ctx = VX_NEW(SampleCppModule::Context);
-  CSampleModule = ctx;
+void TextEdit::CreateContext() {
+  TextEdit::Context *ctx = VX_NEW(TextEdit::Context);
+  CTextEdit = ctx;
 }
 
-void SampleCppModule::DestroyContext() { VX_FREE(CSampleModule); }
+void TextEdit::DestroyContext() { VX_FREE(CTextEdit); }
 
-void SampleCppModule::HelloWorld() {
+void TextEdit::HelloWorld() {
   std::cout << "Hello Vortex World !!" << std::endl;
 }
 
-void SampleCppModule::OutputHandleHello() {
+void TextEdit::OutputHandleHello() {
   std::cout << "Handling the HEllow output event...." << std::endl;
 }
 
-bool SampleCppModule::IsValidFile(const std::string &path) {
+bool TextEdit::IsValidFile(const std::string &path) {
   namespace fs = std::filesystem;
 
   if (!fs::is_directory(path)) {
@@ -32,7 +32,7 @@ bool SampleCppModule::IsValidFile(const std::string &path) {
   return false;
 }
 
-void SampleCppModule::StartTextEditorInstance(const std::string &path) {
+void TextEdit::StartTextEditorInstance(const std::string &path) {
   std::string filename = fs::path(path).filename().string();
 
   const size_t maxLen = 24;
@@ -42,33 +42,32 @@ void SampleCppModule::StartTextEditorInstance(const std::string &path) {
 
   std::string window_name =
       filename + "####" +
-      std::to_string(CSampleModule->m_text_editor_instances.size());
+      std::to_string(CTextEdit->m_text_editor_instances.size());
 
   auto inst = ModuleUI::TextEditorAppWindow::Create(path, window_name);
   Cherry::AddAppWindow(inst->GetAppWindow());
-  CSampleModule->m_text_editor_instances.push_back(inst);
+  CTextEdit->m_text_editor_instances.push_back(inst);
 }
 
-void SampleCppModule::InputHello() {
+void TextEdit::InputHello() {
   std::cout << "Input event hello triggered !!!" << std::endl;
 }
 
-void SampleCppModule::FunctionWithArg(ArgumentValues &arg) {
+void TextEdit::FunctionWithArg(ArgumentValues &arg) {
   // std::string name = val.GetJsonValue()["name"].get<std::string>();
   std::cout << "print the name given in aguments"
             << arg.GetJsonValue()["name"].get<std::string>() << std::endl;
 }
 
-std::string SampleCppModule::GetPath(const std::string &path) {
-  return CSampleModule->m_interface->GetPath() + "/" + path;
+std::string TextEdit::GetPath(const std::string &path) {
+  return CTextEdit->m_interface->GetPath() + "/" + path;
 }
 
-void SampleCppModule::FunctionWithRet(ReturnValues &ret) {
+void TextEdit::FunctionWithRet(ReturnValues &ret) {
   // Set the return value (time for this example)
   ret.SetJsonValue(nlohmann::json::parse("{\"time\":\"current\"}"));
 }
-void SampleCppModule::FunctionWithArgRet(ArgumentValues &arg,
-                                         ReturnValues &ret) {
+void TextEdit::FunctionWithArgRet(ArgumentValues &arg, ReturnValues &ret) {
   // std::string name = val.GetJsonValue()["name"].get<std::string>();
   std::string name = arg.GetJsonValue()["name"].get<std::string>();
   ret.SetJsonValue(

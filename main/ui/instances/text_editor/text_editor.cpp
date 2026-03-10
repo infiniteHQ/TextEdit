@@ -13,11 +13,15 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
   m_Type = detect_file(path);
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
   std::string image_name = GetFileTypeStr(m_Type) + ".png";
-  m_AppWindow->SetIcon(
-      SampleCppModule::GetPath("/resources/files/" + image_name));
+  m_AppWindow->SetIcon(TextEdit::GetPath("/resources/files/" + image_name));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
   m_AppWindow->SetSaveMode(true);
+
+  m_AppWindow->m_CloseCallback = [=]() {
+    Cherry::DeleteAppWindow(m_AppWindow);
+    m_AppWindow->SetVisibility(false);
+  };
 
   std::shared_ptr<Cherry::AppWindow> win = m_AppWindow;
   m_FilePath = path;
@@ -98,7 +102,7 @@ void TextEditorAppWindow::RenderMenubar() {
   }
 
   if (CherryKit::ButtonImageText(
-          "Save", SampleCppModule::GetPath("/resources/icons/icon_save.png"))
+          "Save", TextEdit::GetPath("/resources/icons/icon_save.png"))
           .GetDataAs<bool>("isClicked")) {
     m_SavePending = true;
   }
@@ -110,8 +114,7 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
   if (CherryKit::ButtonImageText(
-          "Refresh",
-          SampleCppModule::GetPath("/resources/icons/icon_refresh.png"))
+          "Refresh", TextEdit::GetPath("/resources/icons/icon_refresh.png"))
           .GetDataAs<bool>("isClicked")) {
     m_RefreshReady = true;
   }
