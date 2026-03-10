@@ -210,6 +210,8 @@ public:
   void render();
   void close();
 
+  int mColorizeTimer = 0;
+  bool mColorizeNeeded = false;
   bool opened;
   std::string name;
   // std::shared_ptr<Walnut::Image> m_MainIcon;
@@ -401,6 +403,7 @@ private:
   void RemoveLine(int aIndex);
   Line &InsertLine(int aIndex);
   void EnterCharacter(ImWchar aChar, bool aShift);
+  void EnterCharacters(const std::string &aChars, bool aShift);
   void Backspace();
   void DeleteSelection();
   std::string GetWordUnderCursor() const;
@@ -422,6 +425,7 @@ private:
   bool mScrollToCursor;
   bool mScrollToTop;
   bool mTextChanged;
+  int mCheckCommentsFromLine = 0;
   bool mColorizerEnabled;
   float mTextStart; // position (in pixels) where a code line starts relative to
                     // the left of the TextEditor.
@@ -453,9 +457,13 @@ private:
 class TextAreaComponent : public Component {
 public:
   TextAreaComponent(const Cherry::Identifier &id, float *width, float *height,
-                    std::string *buffer, float *font_size)
+                    std::string *buffer, float *font_size, int *currentLine,
+                    int *currentColumn, int *totalLines,
+                    std::string *currentLanguageDef, bool *canOverrite)
       : Component(id), m_Width(width), m_Height(height), m_TextEditor("temp"),
-        m_EditBuffer(buffer), m_FontSize(font_size) {
+        m_EditBuffer(buffer), m_FontSize(font_size), m_CurrentLine(currentLine),
+        m_CurrentColumn(currentColumn), m_TotalLines(totalLines),
+        m_CurrentLanguageDef(currentLanguageDef), m_CanOverrite(canOverrite) {
     // Identifier
     SetIdentifier(id);
     // Colors
@@ -467,6 +475,8 @@ public:
 
     SetData("save_ready", "false");
     SetData("text_changed", false);
+
+    m_TextEditor.SetShowWhitespaces(false);
 
     if (buffer) {
       m_TextEditor.SetText(*buffer);
@@ -519,6 +529,24 @@ public:
 
     m_TextEditor.render();
 
+    auto cpos = m_TextEditor.GetCursorPosition();
+
+    if (m_CurrentLine)
+      *m_CurrentLine = cpos.mLine;
+
+    if (m_CurrentColumn)
+      *m_CurrentColumn = cpos.mColumn;
+
+    if (m_TotalLines)
+      *m_TotalLines = m_TextEditor.GetTotalLines();
+
+    if (m_CurrentLanguageDef)
+      *m_CurrentLanguageDef =
+          m_TextEditor.GetLanguageDefinition().mName.c_str();
+
+    if (m_CanOverrite)
+      *m_CanOverrite = m_TextEditor.CanUndo();
+
     if (m_FontSize)
       CherryStyle::PopFontSize();
 
@@ -529,22 +557,35 @@ private:
   float *m_Width;
   float *m_Height;
   float *m_FontSize;
+
+  int *m_CurrentLine;
+  int *m_CurrentColumn;
+  int *m_TotalLines;
+  std::string *m_CurrentLanguageDef;
+  bool *m_CanOverrite;
+
   TextEditorCore m_TextEditor;
   std::string *m_EditBuffer;
 };
 
 inline Component &TextArea(const Identifier &identifier, float *width,
-                           float *height, std::string *buffer,
-                           float *font_size) {
-  return CherryApp.PushComponent<TextAreaComponent>(identifier, width, height,
-                                                    buffer, font_size);
+                           float *height, std::string *buffer, float *font_size,
+                           int *currentLine, int *currentColumn,
+                           int *totalLines, std::string *currentLanguageDef,
+                           bool *canOverrite) {
+  return CherryApp.PushComponent<TextAreaComponent>(
+      identifier, width, height, buffer, font_size, currentLine, currentColumn,
+      totalLines, currentLanguageDef, canOverrite);
 }
 
 inline Component &TextArea(float *width, float *height, std::string *buffer,
-                           float *font_size) {
+                           float *font_size, int *currentLine,
+                           int *currentColumn, int *totalLines,
+                           std::string *currentLanguageDef, bool *canOverrite) {
   return ModuleUI::TextArea(
       Application::GenerateUniqueID(width, height, buffer, "TextArea"), width,
-      height, buffer, font_size);
+      height, buffer, font_size, currentLine, currentColumn, totalLines,
+      currentLanguageDef, canOverrite);
 }
 
 }; // namespace ModuleUI

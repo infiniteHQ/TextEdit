@@ -1918,27 +1918,27 @@ void TextEditorCore::Redo(int aSteps) {
 
 const TextEditorCore::Palette &TextEditorCore::GetDarkPalette() {
   const static Palette p = {{
-      0xff00ffcc, // Default (Cyan néon)
-      0xffff00ff, // Keyword (Rose néon)
-      0xff00ffff, // Number (Bleu néon)
-      0xffffa500, // String (Orange néon)
-      0xff00ff66, // Char literal (Vert néon)
-      0xffffffff, // Punctuation (Blanc pur)
-      0xff00ff00, // Preprocessor (Vert fluo)
-      0xffd3d3d3, // Identifier (Gris clair)
-      0xff32cd32, // Known identifier (Lime néon)
-      0xffff1493, // Preproc identifier (Rose vif)
-      0xff7fff00, // Comment (single line) (Vert acidulé)
-      0xffadff2f, // Comment (multi line) (Vert clair néon)
-      0xff1a1a1a, // Background (Noir foncé)
-      0xffe6e6e6, // Cursor (Gris clair)
-      0xffff00ff, // Selection (Rose néon semi-transparent)
-      0xffff4500, // ErrorMarker (Rouge vif)
-      0xff00ff00, // Breakpoint (Vert néon)
-      0xff555555, // Line number (Gris foncé)
-      0x40404040, // Current line fill (Gris foncé, semi-transparent)
-      0x40808080, // Current line fill (inactive) (Gris moyen, semi-transparent)
-      0x40ff00ff, // Current line edge (Rose néon semi-transparent)
+      0xFFBBBBBB, // Default
+      0xFFBBBBBB, // Keyword
+      0xFFBBBBBB, // Number
+      0xFFBBBBBB, // String
+      0xFFBBBBBB, // Char literal
+      0xFFBBBBBB, // Punctuation
+      0xFFBBBBBB, // Preprocessor
+      0xFFBBBBBB, // Identifier
+      0xFFBBBBBB, // Known identifier
+      0xFFBBBBBB, // Preproc identifier
+      0xFFBBBBBB, // Comment (single line)
+      0xFFBBBBBB, // Comment (multi line)
+      0xff1a1a1a, // Background
+      0xffe6e6e6, // Cursor
+      0x66AAAAAA, // Selection
+      0xFFBBBBBB, // ErrorMarker
+      0xFFBBBBBB, // Breakpoint
+      0xff555555, // Line number
+      0x55333333, // Current line fill
+      0x22333333, // Current line fill (inactive)
+      0x55333333, // Current line edge
   }};
   return p;
 }

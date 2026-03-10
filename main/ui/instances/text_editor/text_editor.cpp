@@ -20,6 +20,7 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
   m_AppWindow->SetIcon(TextEdit::GetPath("/resources/files/" + image_name));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
+  m_AppWindow->SetLeftBottombarCallback([this]() { RenderBottombar(); });
   m_AppWindow->SetSaveMode(true);
 
   m_AppWindow->m_CloseCallback = [=]() {
@@ -305,8 +306,9 @@ void TextEditorAppWindow::Render() {
 
   auto test = CherryGUI::GetContentRegionAvail();
 
-  auto &editor =
-      ModuleUI::TextArea(&test.x, &test.y, &m_FileEditBuffer, &m_TextSize);
+  auto &editor = ModuleUI::TextArea(
+      &test.x, &test.y, &m_FileEditBuffer, &m_TextSize, &m_CurrentLine,
+      &m_CurrentColumn, &m_TotalLines, &m_CurrentLanguageDef, &m_CanOverrite);
 
   if (!m_FileUpdated) {
     if (editor.GetDataAs<bool>("text_changed")) {
@@ -369,11 +371,11 @@ void TextEditorAppWindow::Render() {
 void TextEditorAppWindow::RenderRightMenubar() {
   CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
 
-  if (m_TextSize > 1.0f)
-    m_TextSize = 1.0f;
+  if (m_TextSize > m_TextSizeMax)
+    m_TextSize = m_TextSizeMax;
 
-  if (m_TextSize < 0.2f)
-    m_TextSize = 0.2f;
+  if (m_TextSize < m_TextSizeMin)
+    m_TextSize = m_TextSizeMin;
 
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
@@ -411,6 +413,12 @@ void TextEditorAppWindow::RenderRightMenubar() {
 
   CherryGUI::PopStyleColor();
   CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() - 1.5f);
+}
+
+void TextEditorAppWindow::RenderBottombar() {
+  ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s", m_CurrentLine + 1,
+              m_CurrentColumn + 1, m_TotalLines, m_CanOverrite ? "Ovr" : "Ins",
+              m_CurrentLanguageDef, m_FilePath);
 }
 
 }; // namespace ModuleUI

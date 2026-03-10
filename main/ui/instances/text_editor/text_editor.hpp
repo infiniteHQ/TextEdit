@@ -50,6 +50,7 @@ public:
   void Render();
   void RenderMenubar();
   void RenderRightMenubar();
+  void RenderBottombar();
 
   std::string get_extension(const std::string &path) {
     size_t dot_pos = path.find_last_of('.');
@@ -63,7 +64,15 @@ public:
   void Undo();
   void Redo();
 
-  float m_TextSize = 0.3f;
+  float m_TextSize = 0.5f;
+  float m_TextSizeMin = 0.3f;
+  float m_TextSizeMax = 2.0f;
+
+  int m_CurrentLine = 0;
+  int m_CurrentColumn = 0;
+  int m_TotalLines = 0;
+  std::string m_CurrentLanguageDef = "";
+  bool m_CanOverrite = false;
 
 private:
   VxContext *ctx;

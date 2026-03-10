@@ -75,7 +75,7 @@ public:
   void init_ui() override {
     CherryApp.AddFont(
         "JetBrainsMono",
-        TextEdit::GetPath("resources/fonts/JetBrainsMono-Regular.ttf"), 70.0f);
+        TextEdit::GetPath("resources/fonts/JetBrainsMono-Regular.ttf"), 40.0f);
   }
 
   void destroy() override {
