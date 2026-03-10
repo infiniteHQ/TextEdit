@@ -10,6 +10,10 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
                                          const std::string &name) {
   namespace fs = std::filesystem;
 
+  CherryApp.AddFont(
+      "JetBrainsMono",
+      TextEdit::GetPath("resources/fonts/JetBrainsMono-Regular.ttf"));
+
   m_Type = detect_file(path);
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
   std::string image_name = GetFileTypeStr(m_Type) + ".png";
@@ -300,7 +304,9 @@ void TextEditorAppWindow::Render() {
   CherryApp.PushComponentPool(&m_ComponentPool);
 
   auto test = CherryGUI::GetContentRegionAvail();
-  auto &editor = ModuleUI::TextArea(&test.x, &test.y, &m_FileEditBuffer);
+
+  auto &editor =
+      ModuleUI::TextArea(&test.x, &test.y, &m_FileEditBuffer, &m_TextSize);
 
   if (!m_FileUpdated) {
     if (editor.GetDataAs<bool>("text_changed")) {
@@ -363,6 +369,12 @@ void TextEditorAppWindow::Render() {
 void TextEditorAppWindow::RenderRightMenubar() {
   CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(0.4f, 0.4f, 0.4f, 0.7f));
 
+  if (m_TextSize > 1.0f)
+    m_TextSize = 1.0f;
+
+  if (m_TextSize < 0.2f)
+    m_TextSize = 0.2f;
+
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
   CherryNextComponent.SetProperty("disable_callback", "true");
@@ -387,6 +399,11 @@ void TextEditorAppWindow::RenderRightMenubar() {
 
   if (CherryGUI::BeginPopup("SettingsMenuPopup")) {
     CherryKit::CheckboxText("Auto refresh", &m_AutoRefresh);
+
+    CherryNextComponent.SetProperty("step", "0.05");
+    CherryNextComponent.SetProperty("step_fast", "0.1");
+    CherryKit::InputFloat("Size", &m_TextSize);
+
     CherryGUI::EndPopup();
   }
 

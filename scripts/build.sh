@@ -21,7 +21,7 @@ mkdir -p "../dist/$FOLDER_NAME"
 
 cp -r ../build/* ../dist/$FOLDER_NAME/
 cp -r ../lib ../dist/$FOLDER_NAME/ 2>/dev/null || true
-cp -r ../assets/* ../dist/$FOLDER_NAME/ 2>/dev/null || true
+cp -r ../main/assets/* ../dist/$FOLDER_NAME/ 2>/dev/null || true
 cp ../module.json ../dist/$FOLDER_NAME/
 
 rm -rf "../dist/$FOLDER_NAME/build/CMakeFiles"

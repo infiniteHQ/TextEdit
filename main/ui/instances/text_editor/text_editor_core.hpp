@@ -199,6 +199,8 @@ public:
     static const LanguageDefinition &SQL();
     static const LanguageDefinition &AngelScript();
     static const LanguageDefinition &Lua();
+    static const LanguageDefinition &PlainText();
+    static const LanguageDefinition &JSON();
   };
 
   // TextEditorCore(const std::filesystem::path& PathToFile);
@@ -451,9 +453,9 @@ private:
 class TextAreaComponent : public Component {
 public:
   TextAreaComponent(const Cherry::Identifier &id, float *width, float *height,
-                    std::string *buffer)
+                    std::string *buffer, float *font_size)
       : Component(id), m_Width(width), m_Height(height), m_TextEditor("temp"),
-        m_EditBuffer(buffer) {
+        m_EditBuffer(buffer), m_FontSize(font_size) {
     // Identifier
     SetIdentifier(id);
     // Colors
@@ -475,7 +477,7 @@ public:
     if (!m_Width || !m_Height) {
       return;
     }
-    Cherry::PushFont("FiraCode");
+    Cherry::PushFont("JetBrainsMono");
 
     if (GetProperty("refresh_pending") == "true") {
       if (m_EditBuffer) {
@@ -512,7 +514,13 @@ public:
       SetProperty("redo_pending", false);
     }
 
+    if (m_FontSize)
+      CherryStyle::PushFontSize(*m_FontSize);
+
     m_TextEditor.render();
+
+    if (m_FontSize)
+      CherryStyle::PopFontSize();
 
     Cherry::PopFont();
   }
@@ -520,20 +528,23 @@ public:
 private:
   float *m_Width;
   float *m_Height;
+  float *m_FontSize;
   TextEditorCore m_TextEditor;
   std::string *m_EditBuffer;
 };
 
 inline Component &TextArea(const Identifier &identifier, float *width,
-                           float *height, std::string *buffer) {
+                           float *height, std::string *buffer,
+                           float *font_size) {
   return CherryApp.PushComponent<TextAreaComponent>(identifier, width, height,
-                                                    buffer);
+                                                    buffer, font_size);
 }
 
-inline Component &TextArea(float *width, float *height, std::string *buffer) {
+inline Component &TextArea(float *width, float *height, std::string *buffer,
+                           float *font_size) {
   return ModuleUI::TextArea(
       Application::GenerateUniqueID(width, height, buffer, "TextArea"), width,
-      height, buffer);
+      height, buffer, font_size);
 }
 
 }; // namespace ModuleUI

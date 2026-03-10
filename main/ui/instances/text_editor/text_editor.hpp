@@ -63,6 +63,8 @@ public:
   void Undo();
   void Redo();
 
+  float m_TextSize = 0.3f;
+
 private:
   VxContext *ctx;
   bool opened;

@@ -72,6 +72,12 @@ public:
     }
   }
 
+  void init_ui() override {
+    CherryApp.AddFont(
+        "JetBrainsMono",
+        TextEdit::GetPath("resources/fonts/JetBrainsMono-Regular.ttf"), 70.0f);
+  }
+
   void destroy() override {
     // Reset module
     this->ResetModule();

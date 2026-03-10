@@ -50,7 +50,7 @@ TextEditorCore::TextEditorCore(const std::string &buffer)
   this->SetText(buffer);
 
   SetPalette(GetDarkPalette());
-  SetLanguageDefinition(LanguageDefinition::CPlusPlus());
+  SetLanguageDefinition(LanguageDefinition::PlainText());
   mLines.push_back(Line());
 }
 
@@ -325,9 +325,10 @@ TextEditorCore::ScreenPosToCoordinates(const ImVec2 &aPosition) const {
       float columnWidth = 0.0f;
 
       if (line[columnIndex].mChar == '\t') {
-        float spaceSize =
-            CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, " ")
-                .x;
+        float spaceSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(),
+                                                   CherryGUI::GetFontSize(),
+                                                   FLT_MAX, -1.0f, " ")
+                              .x;
         float oldX = columnX;
         float newColumnX = (1.0f + std::floor((1.0f + columnX) /
                                               (float(mTabSize) * spaceSize))) *
@@ -345,9 +346,10 @@ TextEditorCore::ScreenPosToCoordinates(const ImVec2 &aPosition) const {
         while (i < 6 && d-- > 0)
           buf[i++] = line[columnIndex++].mChar;
         buf[i] = '\0';
-        columnWidth =
-            CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, buf)
-                .x;
+        columnWidth = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(),
+                                               CherryGUI::GetFontSize(),
+                                               FLT_MAX, -1.0f, buf)
+                          .x;
         if (mTextStart + columnX + columnWidth * 0.5f > local.x)
           break;
         columnX += columnWidth;
@@ -670,7 +672,8 @@ void TextEditorCore::HandleKeyboardInputs() {
         CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Z)))
       Undo();
     else if (!IsReadOnly() && !ctrl && !shift && alt &&
-             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Backspace)))
+             CherryGUI::IsKeyPressed(
+                 CherryGUI::GetKeyIndex(ImGuiKey_Backspace)))
       Undo();
     else if (!IsReadOnly() && ctrl && !shift && !alt &&
              CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Y)))
@@ -679,17 +682,20 @@ void TextEditorCore::HandleKeyboardInputs() {
              CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_UpArrow)))
       MoveUp(1, shift);
     else if (!ctrl && !alt &&
-             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_DownArrow)))
+             CherryGUI::IsKeyPressed(
+                 CherryGUI::GetKeyIndex(ImGuiKey_DownArrow)))
       MoveDown(1, shift);
-    else if (!alt &&
-             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_LeftArrow)))
+    else if (!alt && CherryGUI::IsKeyPressed(
+                         CherryGUI::GetKeyIndex(ImGuiKey_LeftArrow)))
       MoveLeft(1, shift, ctrl);
-    else if (!alt &&
-             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_RightArrow)))
+    else if (!alt && CherryGUI::IsKeyPressed(
+                         CherryGUI::GetKeyIndex(ImGuiKey_RightArrow)))
       MoveRight(1, shift, ctrl);
-    else if (!alt && CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_PageUp)))
+    else if (!alt &&
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_PageUp)))
       MoveUp(GetPageSize() - 4, shift);
-    else if (!alt && CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_PageDown)))
+    else if (!alt &&
+             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_PageDown)))
       MoveDown(GetPageSize() - 4, shift);
     else if (!alt && ctrl &&
              CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Home)))
@@ -707,7 +713,8 @@ void TextEditorCore::HandleKeyboardInputs() {
              CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Delete)))
       Delete();
     else if (!IsReadOnly() && !ctrl && !shift && !alt &&
-             CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Backspace)))
+             CherryGUI::IsKeyPressed(
+                 CherryGUI::GetKeyIndex(ImGuiKey_Backspace)))
       Backspace();
     else if (!ctrl && !shift && !alt &&
              CherryGUI::IsKeyPressed(CherryGUI::GetKeyIndex(ImGuiKey_Insert)))
@@ -745,7 +752,7 @@ void TextEditorCore::HandleKeyboardInputs() {
         if (c != 0 && (c == '\n' || c >= 32))
           EnterCharacter(c, shift);
       }
-CherryGUI::ClearInputQueueCharacters(io);
+      CherryGUI::ClearInputQueueCharacters(io);
     }
   }
 }
@@ -826,11 +833,12 @@ void TextEditorCore::HandleMouseInputs() {
 void TextEditorCore::Render() {
 
   /* Compute mCharAdvance regarding to scaled font size (Ctrl + mouse wheel)*/
-  const float fontSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX,
-                                             -1.0f, "#", nullptr, nullptr)
-                             .x;
-  mCharAdvance =
-      ImVec2(fontSize, CherryGUI::GetTextLineHeightWithSpacing() * mLineSpacing);
+  const float fontSize =
+      CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(),
+                               FLT_MAX, -1.0f, "#", nullptr, nullptr)
+          .x;
+  mCharAdvance = ImVec2(fontSize, CherryGUI::GetTextLineHeightWithSpacing() *
+                                      mLineSpacing);
 
   /* Update palette with the current alpha from style */
   for (int i = 0; i < (int)PaletteIndex::Max; ++i) {
@@ -858,22 +866,24 @@ void TextEditorCore::Render() {
   auto globalLineMax = (int)mLines.size();
   auto lineMax =
       (std::max)(0, (std::min)((int)mLines.size() - 1,
-                           lineNo + (int)floor((scrollY + contentSize.y) /
-                                               mCharAdvance.y)));
+                               lineNo + (int)floor((scrollY + contentSize.y) /
+                                                   mCharAdvance.y)));
 
   // Deduce mTextStart by evaluating mLines size (global lineMax) plus two
   // spaces as text width
   char buf[16];
   snprintf(buf, 16, " %d ", globalLineMax);
-  mTextStart = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, buf,
-                                   nullptr, nullptr)
-                   .x +
-               mLeftMargin;
+  mTextStart =
+      CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(),
+                               FLT_MAX, -1.0f, buf, nullptr, nullptr)
+          .x +
+      mLeftMargin;
 
   if (!mLines.empty()) {
-    float spaceSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
-                                          " ", nullptr, nullptr)
-                          .x;
+    float spaceSize =
+        CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(),
+                                 FLT_MAX, -1.0f, " ", nullptr, nullptr)
+            .x;
 
     while (lineNo <= lineMax) {
       ImVec2 lineStartScreenPos = ImVec2(
@@ -883,8 +893,8 @@ void TextEditorCore::Render() {
 
       auto &line = mLines[lineNo];
       longest = (std::max)(mTextStart + TextDistanceToLineStart(Coordinates(
-                                          lineNo, GetLineMaxColumn(lineNo))),
-                         longest);
+                                            lineNo, GetLineMaxColumn(lineNo))),
+                           longest);
       auto columnNo = 0;
       Coordinates lineStartCoord(lineNo, 0);
       Coordinates lineEndCoord(lineNo, GetLineMaxColumn(lineNo));
@@ -912,7 +922,7 @@ void TextEditorCore::Render() {
         ImVec2 vend(lineStartScreenPos.x + mTextStart + ssend,
                     lineStartScreenPos.y + mCharAdvance.y);
         CherryGUI::AddRectFilled(drawList, vstart, vend,
-                                mPalette[(int)PaletteIndex::Selection]);
+                                 mPalette[(int)PaletteIndex::Selection]);
       }
 
       // Draw breakpoints
@@ -922,7 +932,7 @@ void TextEditorCore::Render() {
         auto end = ImVec2(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX,
                           lineStartScreenPos.y + mCharAdvance.y);
         CherryGUI::AddRectFilled(drawList, start, end,
-                                mPalette[(int)PaletteIndex::Breakpoint]);
+                                 mPalette[(int)PaletteIndex::Breakpoint]);
       }
 
       // Draw error markers
@@ -931,15 +941,17 @@ void TextEditorCore::Render() {
         auto end = ImVec2(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX,
                           lineStartScreenPos.y + mCharAdvance.y);
         CherryGUI::AddRectFilled(drawList, start, end,
-                                mPalette[(int)PaletteIndex::ErrorMarker]);
+                                 mPalette[(int)PaletteIndex::ErrorMarker]);
 
         if (CherryGUI::IsMouseHoveringRect(lineStartScreenPos, end)) {
           CherryGUI::BeginTooltip();
-          CherryGUI::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+          CherryGUI::PushStyleColor(ImGuiCol_Text,
+                                    ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
           CherryGUI::Text("Error at line %d:", errorIt->first);
           CherryGUI::PopStyleColor();
           CherryGUI::Separator();
-          CherryGUI::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.2f, 1.0f));
+          CherryGUI::PushStyleColor(ImGuiCol_Text,
+                                    ImVec4(1.0f, 1.0f, 0.2f, 1.0f));
           CherryGUI::Text("%s", errorIt->second.c_str());
           CherryGUI::PopStyleColor();
           CherryGUI::EndTooltip();
@@ -949,12 +961,14 @@ void TextEditorCore::Render() {
       // Draw line number (right aligned)
       snprintf(buf, 16, "%d  ", lineNo + 1);
 
-      auto lineNoWidth = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX,
-                                             -1.0f, buf, nullptr, nullptr)
+      auto lineNoWidth = CherryGUI::CalcTextSizeA(
+                             CherryGUI::GetFont(), CherryGUI::GetFontSize(),
+                             FLT_MAX, -1.0f, buf, nullptr, nullptr)
                              .x;
-      CherryGUI::AddText(drawList, ImVec2(lineStartScreenPos.x + mTextStart - lineNoWidth,
-                               lineStartScreenPos.y),
-                        mPalette[(int)PaletteIndex::LineNumber], buf);
+      CherryGUI::AddText(drawList,
+                         ImVec2(lineStartScreenPos.x + mTextStart - lineNoWidth,
+                                lineStartScreenPos.y),
+                         mPalette[(int)PaletteIndex::LineNumber], buf);
 
       if (mState.mCursorPosition.mLine == lineNo) {
         auto focused = CherryGUI::IsWindowFocused();
@@ -963,12 +977,13 @@ void TextEditorCore::Render() {
         if (!HasSelection()) {
           auto end = ImVec2(start.x + contentSize.x + scrollX,
                             start.y + mCharAdvance.y);
-          CherryGUI::AddRectFilled(drawList, 
-              start, end,
+          CherryGUI::AddRectFilled(
+              drawList, start, end,
               mPalette[(int)(focused ? PaletteIndex::CurrentLineFill
                                      : PaletteIndex::CurrentLineFillInactive)]);
           CherryGUI::AddRect(drawList, start, end,
-                            mPalette[(int)PaletteIndex::CurrentLineEdge], 1.0f);
+                             mPalette[(int)PaletteIndex::CurrentLineEdge],
+                             1.0f);
         }
 
         // Render the cursor
@@ -994,8 +1009,9 @@ void TextEditorCore::Render() {
                 char buf2[2];
                 buf2[0] = line[cindex].mChar;
                 buf2[1] = '\0';
-                width = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX,
-                                            -1.0f, buf2)
+                width = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(),
+                                                 CherryGUI::GetFontSize(),
+                                                 FLT_MAX, -1.0f, buf2)
                             .x;
               }
             }
@@ -1003,7 +1019,7 @@ void TextEditorCore::Render() {
             ImVec2 cend(textScreenPos.x + cx + width,
                         lineStartScreenPos.y + mCharAdvance.y);
             CherryGUI::AddRectFilled(drawList, cstart, cend,
-                                    mPalette[(int)PaletteIndex::Cursor]);
+                                     mPalette[(int)PaletteIndex::Cursor]);
             if (elapsed > 800)
               mStartTime = timeEnd;
           }
@@ -1023,9 +1039,11 @@ void TextEditorCore::Render() {
             !mLineBuffer.empty()) {
           const ImVec2 newOffset(textScreenPos.x + bufferOffset.x,
                                  textScreenPos.y + bufferOffset.y);
-          CherryGUI::AddText(drawList, newOffset, prevColor, mLineBuffer.c_str());
-          auto textSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f, mLineBuffer.c_str(),
-              nullptr, nullptr);
+          CherryGUI::AddText(drawList, newOffset, prevColor,
+                             mLineBuffer.c_str());
+          auto textSize = CherryGUI::CalcTextSizeA(
+              CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
+              mLineBuffer.c_str(), nullptr, nullptr);
           bufferOffset.x += textSize.x;
           mLineBuffer.clear();
         }
@@ -1056,7 +1074,8 @@ void TextEditorCore::Render() {
             const auto s = CherryGUI::GetFontSize();
             const auto x = textScreenPos.x + bufferOffset.x + spaceSize * 0.5f;
             const auto y = textScreenPos.y + bufferOffset.y + s * 0.5f;
-            CherryGUI::AddCircleFilled(drawList, ImVec2(x, y), 1.5f, 0x80808080, 4);
+            CherryGUI::AddCircleFilled(drawList, ImVec2(x, y), 1.5f, 0x80808080,
+                                       4);
           }
           bufferOffset.x += spaceSize;
           i++;
@@ -1114,9 +1133,9 @@ void TextEditorCore::Render(const char *aTitle, const ImVec2 &aSize,
   mTextChanged = false;
   mCursorPositionChanged = false;
 
-  CherryGUI::PushStyleColor(
-      ImGuiCol_ChildBg,
-      CherryGUI::ColorConvertU32ToFloat4(mPalette[(int)PaletteIndex::Background]));
+  CherryGUI::PushStyleColor(ImGuiCol_ChildBg,
+                            CherryGUI::ColorConvertU32ToFloat4(
+                                mPalette[(int)PaletteIndex::Background]));
   CherryGUI::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
   CherryGUI::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
   CherryGUI::PushStyleVar(ImGuiStyleVar_ChildRounding, 0.0f);
@@ -1124,9 +1143,9 @@ void TextEditorCore::Render(const char *aTitle, const ImVec2 &aSize,
   CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
   if (!mIgnoreImGuiChild)
     CherryGUI::BeginChild(aTitle, aSize, aBorder,
-                      ImGuiWindowFlags_HorizontalScrollbar |
-                          ImGuiWindowFlags_AlwaysHorizontalScrollbar |
-                          ImGuiWindowFlags_NoMove);
+                          ImGuiWindowFlags_HorizontalScrollbar |
+                              ImGuiWindowFlags_AlwaysHorizontalScrollbar |
+                              ImGuiWindowFlags_NoMove);
 
   if (mHandleKeyboardInputs) {
     HandleKeyboardInputs();
@@ -1491,7 +1510,7 @@ void TextEditorCore::MoveDown(int aAmount, bool aSelect) {
   auto oldPos = mState.mCursorPosition;
   mState.mCursorPosition.mLine =
       (std::max)(0, (std::min)((int)mLines.size() - 1,
-                           mState.mCursorPosition.mLine + aAmount));
+                               mState.mCursorPosition.mLine + aAmount));
 
   if (mState.mCursorPosition != oldPos) {
     if (aSelect) {
@@ -1585,7 +1604,7 @@ void TextEditorCore::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
       if (mState.mCursorPosition.mLine < mLines.size() - 1) {
         mState.mCursorPosition.mLine =
             (std::max)(0, (std::min)((int)mLines.size() - 1,
-                                 mState.mCursorPosition.mLine + 1));
+                                     mState.mCursorPosition.mLine + 1));
         mState.mCursorPosition.mColumn = 0;
       } else
         return;
@@ -2014,8 +2033,9 @@ std::string TextEditorCore::GetCurrentLineText() const {
 void TextEditorCore::ProcessInputs() {}
 
 void TextEditorCore::Colorize(int aFromLine, int aLines) {
-  int toLine = aLines == -1 ? (int)mLines.size()
-                            : (std::min)((int)mLines.size(), aFromLine + aLines);
+  int toLine = aLines == -1
+                   ? (int)mLines.size()
+                   : (std::min)((int)mLines.size(), aFromLine + aLines);
   mColorRangeMin = (std::min)(mColorRangeMin, aFromLine);
   mColorRangeMax = (std::max)(mColorRangeMax, toLine);
   mColorRangeMin = (std::max)(0, mColorRangeMin);
@@ -2252,9 +2272,10 @@ void TextEditorCore::ColorizeInternal() {
 float TextEditorCore::TextDistanceToLineStart(const Coordinates &aFrom) const {
   auto &line = mLines[aFrom.mLine];
   float distance = 0.0f;
-  float spaceSize = CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
-                                        " ", nullptr, nullptr)
-                        .x;
+  float spaceSize =
+      CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(),
+                               FLT_MAX, -1.0f, " ", nullptr, nullptr)
+          .x;
   int colIndex = GetCharacterIndex(aFrom);
   for (size_t it = 0u; it < line.size() && it < colIndex;) {
     if (line[it].mChar == '\t') {
@@ -2270,8 +2291,9 @@ float TextEditorCore::TextDistanceToLineStart(const Coordinates &aFrom) const {
         tempCString[i] = line[it].mChar;
 
       tempCString[i] = '\0';
-      distance += CherryGUI::CalcTextSizeA(CherryGUI::GetFont(), CherryGUI::GetFontSize(), FLT_MAX, -1.0f,
-                                      tempCString, nullptr, nullptr)
+      distance += CherryGUI::CalcTextSizeA(CherryGUI::GetFont(),
+                                           CherryGUI::GetFontSize(), FLT_MAX,
+                                           -1.0f, tempCString, nullptr, nullptr)
                       .x;
     }
   }
@@ -2570,6 +2592,74 @@ static bool TokenizeCStylePunctuation(const char *in_begin, const char *in_end,
   }
 
   return false;
+}
+const TextEditorCore::LanguageDefinition &
+TextEditorCore::LanguageDefinition::PlainText() {
+  static bool inited = false;
+  static LanguageDefinition langDef;
+  if (!inited) {
+    langDef.mTokenize = [](const char *in_begin, const char *in_end,
+                           const char *&out_begin, const char *&out_end,
+                           PaletteIndex &paletteIndex) -> bool {
+      if (in_begin >= in_end)
+        return false;
+      out_begin = in_begin;
+      out_end = in_end;
+      paletteIndex = PaletteIndex::Default;
+      return true;
+    };
+    langDef.mCommentStart = "";
+    langDef.mCommentEnd = "";
+    langDef.mSingleLineComment = "";
+    langDef.mCaseSensitive = false;
+    langDef.mAutoIndentation = false;
+    langDef.mName = "Plain Text";
+    inited = true;
+  }
+  return langDef;
+}
+
+const TextEditorCore::LanguageDefinition &
+TextEditorCore::LanguageDefinition::JSON() {
+  static bool inited = false;
+  static LanguageDefinition langDef;
+  if (!inited) {
+    static const char *const jsonKeywords[] = {"true", "false", "null"};
+    for (auto &k : jsonKeywords)
+      langDef.mKeywords.insert(k);
+
+    langDef.mTokenize = [](const char *in_begin, const char *in_end,
+                           const char *&out_begin, const char *&out_end,
+                           PaletteIndex &paletteIndex) -> bool {
+      paletteIndex = PaletteIndex::Max;
+      while (in_begin < in_end && isascii(*in_begin) && isblank(*in_begin))
+        in_begin++;
+
+      if (in_begin == in_end) {
+        out_begin = in_end;
+        out_end = in_end;
+        paletteIndex = PaletteIndex::Default;
+      } else if (TokenizeCStyleString(in_begin, in_end, out_begin, out_end))
+        paletteIndex = PaletteIndex::String;
+      else if (TokenizeCStyleIdentifier(in_begin, in_end, out_begin, out_end))
+        paletteIndex = PaletteIndex::Identifier;
+      else if (TokenizeCStyleNumber(in_begin, in_end, out_begin, out_end))
+        paletteIndex = PaletteIndex::Number;
+      else if (TokenizeCStylePunctuation(in_begin, in_end, out_begin, out_end))
+        paletteIndex = PaletteIndex::Punctuation;
+
+      return paletteIndex != PaletteIndex::Max;
+    };
+
+    langDef.mCommentStart = "";
+    langDef.mCommentEnd = "";
+    langDef.mSingleLineComment = "";
+    langDef.mCaseSensitive = true;
+    langDef.mAutoIndentation = true;
+    langDef.mName = "JSON";
+    inited = true;
+  }
+  return langDef;
 }
 
 const TextEditorCore::LanguageDefinition &
