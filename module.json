@@ -15,6 +15,6 @@
         "1.0"
     ],
     "path": "./libmodule.so",
-    "picture": "./resources/test.png",
-    "description": "A simple text file editor"
+    "picture": "./resources/logo.png",
+    "description": "A very simple and tiny text editor. Open, edit and save config files, text files easely."
 }

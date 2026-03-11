@@ -19,22 +19,14 @@ struct Context {
 #endif
 
 #ifndef CTextEdit
-extern TEXTEDIT_API TextEdit::Context
-    *CTextEdit; // Current implicit context pointer
+extern TEXTEDIT_API TextEdit::Context *CTextEdit;
 #endif
 
-// The code API of the module.
 namespace TextEdit {
 TEXTEDIT_API void CreateContext();
 TEXTEDIT_API void DestroyContext();
-TEXTEDIT_API void HelloWorld();
-TEXTEDIT_API void FunctionWithArg(ArgumentValues &val);
-TEXTEDIT_API void FunctionWithRet(ReturnValues &ret);
-TEXTEDIT_API void FunctionWithArgRet(ArgumentValues &val, ReturnValues &ret);
-TEXTEDIT_API void OutputHandleHello();
-TEXTEDIT_API void InputHello();
-TEXTEDIT_API std::string GetPath(const std::string &path);
 
+TEXTEDIT_API std::string GetPath(const std::string &path);
 TEXTEDIT_API void StartTextEditorInstance(const std::string &path);
 TEXTEDIT_API bool IsValidFile(const std::string &path);
 } // namespace TextEdit

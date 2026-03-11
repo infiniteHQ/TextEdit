@@ -7,14 +7,6 @@ void TextEdit::CreateContext() {
 
 void TextEdit::DestroyContext() { VX_FREE(CTextEdit); }
 
-void TextEdit::HelloWorld() {
-  std::cout << "Hello Vortex World !!" << std::endl;
-}
-
-void TextEdit::OutputHandleHello() {
-  std::cout << "Handling the HEllow output event...." << std::endl;
-}
-
 bool TextEdit::IsValidFile(const std::string &path) {
   namespace fs = std::filesystem;
 
@@ -49,27 +41,6 @@ void TextEdit::StartTextEditorInstance(const std::string &path) {
   CTextEdit->m_text_editor_instances.push_back(inst);
 }
 
-void TextEdit::InputHello() {
-  std::cout << "Input event hello triggered !!!" << std::endl;
-}
-
-void TextEdit::FunctionWithArg(ArgumentValues &arg) {
-  // std::string name = val.GetJsonValue()["name"].get<std::string>();
-  std::cout << "print the name given in aguments"
-            << arg.GetJsonValue()["name"].get<std::string>() << std::endl;
-}
-
 std::string TextEdit::GetPath(const std::string &path) {
   return CTextEdit->m_interface->GetPath() + "/" + path;
-}
-
-void TextEdit::FunctionWithRet(ReturnValues &ret) {
-  // Set the return value (time for this example)
-  ret.SetJsonValue(nlohmann::json::parse("{\"time\":\"current\"}"));
-}
-void TextEdit::FunctionWithArgRet(ArgumentValues &arg, ReturnValues &ret) {
-  // std::string name = val.GetJsonValue()["name"].get<std::string>();
-  std::string name = arg.GetJsonValue()["name"].get<std::string>();
-  ret.SetJsonValue(
-      nlohmann::json::parse("{\"time\":\"current_name_" + name + "\"}"));
 }

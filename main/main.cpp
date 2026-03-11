@@ -1,5 +1,4 @@
 #include "./src/module.hpp"
-#include "./ui/main/ui.hpp"
 
 #ifndef CTextEdit
 TextEdit::Context *CTextEdit = NULL;
@@ -11,19 +10,11 @@ public:
     // Create the context pointer of this module
     TextEdit::CreateContext();
 
-    // Get the interface pointer (for GUI launcher, from other modules)
+    // Get the interface pointer
     CTextEdit->m_interface =
         ModuleInterface::GetEditorModuleByName(this->m_name);
 
-    // Adding functions
-    this->AddFunction(TextEdit::HelloWorld, "HelloWorld");
-    this->AddFunction(TextEdit::FunctionWithArg, "Arg");
-    this->AddFunction(TextEdit::FunctionWithArgRet, "ArgRet");
-    this->AddFunction(TextEdit::FunctionWithRet, "Ret");
-
-    this->AddOutputEvent(TextEdit::OutputHandleHello, "OutputHandleHello");
-    this->AddInputEvent(TextEdit::InputHello, "InputHello");
-
+    // Add item handler for simple txt files
     this->AddContentBrowserItemHandler(ItemHandlerInterface(
         "file_txt", TextEdit::StartTextEditorInstance, "Edit",
         "Edit this txt file", TextEdit::GetPath("resources/icons/edit.png")));
@@ -34,42 +25,6 @@ public:
 
     this->AddContentBrowserItemIdentifier(ItemIdentifierInterface(
         TextEdit::IsValidFile, "text_edit:superfile", "Super file", "#553333"));
-
-    // SetContentBrowserSaveAllCallback();
-    // AddMainSettingsEntry()
-    // AddContentBrowserCreationPossibility();
-
-    {
-      ArgumentValues values("{\"name\":\"hohoho\"}");
-      ReturnValues ret;
-      this->CallInputEvent(this->m_name, "InputHello", values, ret);
-    }
-
-    {
-      ArgumentValues values("{\"name\":\"hohoho\"}");
-      ReturnValues ret;
-      this->CallOutputEvent("OutputHandleHello", values, ret);
-    }
-
-    {
-      ArgumentValues values("{\"name\":\"hohoho\"}");
-      this->ExecuteFunction("Arg", values);
-    }
-
-    {
-      ArgumentValues values("{\"name\":\"hohoho\"}");
-      ReturnValues ret;
-      this->ExecuteFunction("ArgRet", values, ret);
-      std::cout << "The return of ArgRet is : "
-                << ret.GetJsonValue()["time"].get<std::string>() << std::endl;
-    }
-
-    {
-      ReturnValues ret;
-      this->ExecuteFunction("Ret", ret);
-      std::cout << "The return of Ret is : "
-                << ret.GetJsonValue()["time"].get<std::string>() << std::endl;
-    }
   }
 
   void init_ui() override {
