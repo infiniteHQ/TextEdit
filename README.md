@@ -1,6 +1,6 @@
-
+<a href="https://garage.infinite.si/garage/module?uuid=d23c5dbb-011e-4701-90da-d9ede17cd1a6">
 <img alt="Code Quality" src="https://api.infinite.si/api/garagebadges/badge?type=module&uuid=d23c5dbb-011e-4701-90da-d9ede17cd1a6&kind=advanced">
-
+</a>
 ---
 
 A very simple and tiny text editor. Open, edit and save config files, text files easely.
