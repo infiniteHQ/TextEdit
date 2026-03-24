@@ -2284,27 +2284,34 @@ bool TextEditor::endTransaction(std::shared_ptr<Transaction> transaction) {
     if (transactionCallback) {
       for (auto &action : *transaction) {
         auto &change = changes.emplace_back();
-        change.insert = action.type == Action::Type::insertText;
+        change.insert = (action.type == Action::Type::insertText);
 
         change.startLine = static_cast<int>(action.start.line);
         change.startColumn = static_cast<int>(action.start.column);
-        change.startIndex = static_cast<int>(document.getIndex(action.start));
 
-        change.startLine = static_cast<int>(action.end.line);
-        change.startColumn = static_cast<int>(action.end.column);
-        change.startIndex = static_cast<int>(document.getIndex(action.end));
+        if (action.start.line < document.size()) {
+          change.startIndex = static_cast<int>(document.getIndex(action.start));
+        } else {
+          change.startIndex = -1;
+        }
+
+        change.endLine = static_cast<int>(action.end.line);
+        change.endColumn = static_cast<int>(action.end.column);
+
+        if (action.end.line < document.size()) {
+          change.endIndex = static_cast<int>(document.getIndex(action.end));
+        } else {
+          change.endIndex = -1;
+        }
 
         change.text = action.text;
       }
 
       transactionCallback(changes);
     }
-
     return true;
-
-  } else {
-    return false;
   }
+  return false;
 }
 
 //

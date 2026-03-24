@@ -1831,20 +1831,19 @@ public:
     if (GetProperty("refresh_pending") == "true") {
       if (m_EditBuffer) {
         m_TextEditor.SetText(*m_EditBuffer);
+        this->SetData("text_changed", false);
       }
       SetProperty("refresh_pending", "false");
     }
 
-    /*if (m_TextEditor.SetChangeCallback()) {
-      SetData("text_changed", true);
-    } else {
-      SetData("text_changed", false);
-    }*/
+    m_TextEditor.SetTransactionCallback(
+        [this](auto &changes) { this->SetData("text_changed", true); });
 
     if (GetProperty("save_pending") == "true") {
       if (m_EditBuffer) {
         *m_EditBuffer = m_TextEditor.GetText();
         SetData("save_ready", "true");
+        this->SetData("text_changed", false);
       }
       SetProperty("save_pending", "false");
     }
