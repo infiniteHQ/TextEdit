@@ -1,5 +1,5 @@
 #pragma once
-#include "text_editor_core.hpp"
+#include "core/texteditor.h"
 #include <vxcore/include/vortex.h>
 #include <vxcore/include/vortex_internals.h>
 
