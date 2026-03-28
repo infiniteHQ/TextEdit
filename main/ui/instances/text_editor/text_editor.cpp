@@ -106,8 +106,8 @@ void TextEditorAppWindow::RenderMenubar() {
     CherryGUI::BeginDisabled();
   }
 
-  if (CherryKit::ButtonImageText(
-          "Save", TextEdit::GetPath("/resources/icons/icon_save.png"))
+  if (CherryKit::ButtonImage(
+          TextEdit::GetPath("/resources/icons/icon_save.png"))
           .GetDataAs<bool>("isClicked")) {
     m_SavePending = true;
   }
@@ -118,14 +118,19 @@ void TextEditorAppWindow::RenderMenubar() {
 
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
-  if (CherryKit::ButtonImageText(
-          "Refresh", TextEdit::GetPath("/resources/icons/icon_refresh.png"))
+  if (CherryKit::ButtonImage(
+          TextEdit::GetPath("/resources/icons/icon_refresh.png"))
           .GetDataAs<bool>("isClicked")) {
     m_RefreshReady = true;
   }
 
-  if (m_AutoRefresh) {
-    CherryKit::TextSimple("Auto refresh activated");
+  CherryKit::Separator();
+
+  CherryNextComponent.SetProperty("padding_y", "6.0f");
+  CherryNextComponent.SetProperty("padding_x", "10.0f");
+  if (CherryKit::ButtonImageText(
+          "Find", TextEdit::GetPath("/resources/icons/icon_refresh.png"))
+          .GetDataAs<bool>("isClicked")) {
   }
 }
 
@@ -303,6 +308,57 @@ FileTypes TextEditorAppWindow::detect_file(const std::string &path) {
 
 void TextEditorAppWindow::Render() {
   CherryApp.PushComponentPool(&m_ComponentPool);
+  bool isWindowFocused =
+      ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+  bool isWindowHovered =
+      ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+  bool ctrl = ImGui::GetIO().KeyCtrl;
+
+  bool vPressed = ImGui::IsKeyPressed(ImGuiKey_V);
+  bool cPressed = ImGui::IsKeyPressed(ImGuiKey_C);
+  bool sPressed = ImGui::IsKeyPressed(ImGuiKey_S);
+  bool yPressed = ImGui::IsKeyPressed(ImGuiKey_Y);
+  bool zeroPressed = ImGui::IsKeyPressed(ImGuiKey_0);
+  bool plusPressed = ImGui::IsKeyPressed(ImGuiKey_KeypadAdd) ||
+                     ImGui::IsKeyPressed(ImGuiKey_Equal);
+  bool minusPressed = ImGui::IsKeyPressed(ImGuiKey_KeypadSubtract) ||
+                      ImGui::IsKeyPressed(ImGuiKey_Minus);
+
+  float wheel = ImGui::GetIO().MouseWheel;
+
+  if (isWindowFocused && ctrl) {
+    if (vPressed) {
+      m_PastePending = true;
+    }
+    if (cPressed) {
+      m_CopyPending = true;
+    }
+    if (sPressed) {
+      m_SavePending = true;
+    }
+    if (yPressed) {
+      m_RedoPending = true;
+    }
+
+    if (plusPressed) {
+
+      ZoomIn();
+    }
+    if (minusPressed) {
+      ZoomOut();
+    }
+    if (zeroPressed) {
+      ResetZoom();
+    }
+  }
+
+  if (isWindowHovered && ctrl && wheel != 0.0f) {
+    if (wheel > 0.0f) {
+      ZoomIn();
+    } else {
+      ZoomOut();
+    }
+  }
 
   auto test = CherryGUI::GetContentRegionAvail();
 
@@ -344,6 +400,16 @@ void TextEditorAppWindow::Render() {
     m_RedoPending = false;
   }
 
+  if (m_CopyPending) {
+    editor.SetProperty("copy_pending", "true");
+    m_CopyPending = false;
+  }
+
+  if (m_PastePending) {
+    editor.SetProperty("paste_pending", "true");
+    m_PastePending = false;
+  }
+
   if (m_SaveReady) {
     SaveFile();
     m_SaveReady = false;
@@ -380,35 +446,79 @@ void TextEditorAppWindow::RenderRightMenubar() {
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
   CherryNextComponent.SetProperty("disable_callback", "true");
+
   if (CherryKit::ButtonImageTextDropdown(
           "Settings", GetPath("resources/imgs/icons/misc/icon_settings.png"))
           .GetDataAs<bool>("isClicked")) {
-    ImVec2 mousePos = CherryGUI::GetMousePos();
-    ImVec2 displaySize = CherryGUI::GetIO().DisplaySize;
-    ImVec2 popupSize(150, 100);
-
-    if (mousePos.x + popupSize.x > displaySize.x) {
-      mousePos.x -= popupSize.x;
-    }
-    if (mousePos.y + popupSize.y > displaySize.y) {
-      mousePos.y -= popupSize.y;
-    }
-
-    CherryGUI::SetNextWindowSize(ImVec2(150, 100), ImGuiCond_Appearing);
-    CherryGUI::SetNextWindowPos(mousePos, ImGuiCond_Appearing);
     CherryGUI::OpenPopup("SettingsMenuPopup");
   }
 
-  if (CherryGUI::BeginPopup("SettingsMenuPopup")) {
-    CherryKit::CheckboxText("Auto refresh", &m_AutoRefresh);
+  auto zoomRender = [this]() {
+    int currentPercent = static_cast<int>(std::round(m_TextSize * 200.0f));
 
-    CherryNextComponent.SetProperty("step", "0.05");
-    CherryNextComponent.SetProperty("step_fast", "0.1");
-    CherryKit::InputFloat("Size", &m_TextSize);
+    CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
+
+    if (CherryGUI::Button("-", ImVec2(25, 20))) {
+      ZoomOut();
+    }
+
+    CherryGUI::SameLine();
+
+    CherryGUI::AlignTextToFramePadding();
+    CherryGUI::SetNextItemWidth(40.0f);
+    CherryGUI::Text("%d%%", currentPercent);
+
+    CherryGUI::SameLine();
+
+    if (CherryGUI::Button("+", ImVec2(25, 20))) {
+      ZoomIn();
+    }
+
+    if (CherryGUI::IsItemHovered() && CherryGUI::IsMouseDoubleClicked(0)) {
+      ResetZoom();
+    }
+
+    CherryGUI::PopStyleVar();
+  };
+
+  ImVec2 popupSize(220, 100);
+  ImVec2 mousePos = CherryGUI::GetMousePos();
+  ImVec2 popupPos = ImVec2(mousePos.x - popupSize.x, mousePos.y + 5);
+
+  CherryGUI::SetNextWindowPos(popupPos, ImGuiCond_Appearing);
+  CherryGUI::SetNextWindowSize(popupSize, ImGuiCond_Always);
+
+  CherryGUI::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f));
+  CherryGUI::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+  CherryGUI::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#454545"));
+  CherryGUI::PushStyleColor(ImGuiCol_PopupBg, Cherry::HexToRGBA("#121212E6"));
+
+  if (CherryGUI::BeginPopup("SettingsMenuPopup",
+                            ImGuiWindowFlags_NoMove |
+                                ImGuiWindowFlags_NoResize |
+                                ImGuiWindowFlags_NoSavedSettings)) {
+
+    CherryNextComponent.SetProperty("header_visible", false);
+    CherryNextComponent.SetProperty("padding_x", "2");
+    CherryNextComponent.SetProperty("padding_y", "4");
+
+    auto cmp = CherryKit::TableSimple(
+        CherryID("Parameters"), "fAf",
+        {{CherryKit::KeyValCustom("Zoom", zoomRender)},
+         {CherryKit::KeyValBool("Auto refresh", &m_AutoRefresh)}});
+
+    if (std::abs(m_TextSize - 0.50f) > 0.001f) {
+      CherryGUI::Separator();
+      if (CherryGUI::Selectable("Reset to 100%")) {
+        ResetZoom();
+      }
+    }
 
     CherryGUI::EndPopup();
   }
 
+  CherryGUI::PopStyleColor(2);
+  CherryGUI::PopStyleVar(2);
   CherryGUI::SetCursorPosY(CherryGUI::GetCursorPosY() - 3.0f);
 
   CherryGUI::PopStyleColor();
@@ -416,9 +526,59 @@ void TextEditorAppWindow::RenderRightMenubar() {
 }
 
 void TextEditorAppWindow::RenderBottombar() {
-  ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s", m_CurrentLine + 1,
-              m_CurrentColumn + 1, m_TotalLines, m_CanOverrite ? "Ovr" : "Ins",
-              m_CurrentLanguageDef, m_FilePath);
+  std::string posText = std::to_string(m_CurrentLine + 1) + "/" +
+                        std::to_string(m_CurrentColumn + 1);
+  std::string linesText = std::to_string(m_TotalLines) + " lines";
+  std::string languageText = m_CurrentLanguageDef;
+
+  Cherry::PushFont("JetBrainsMono");
+  CherryStyle::PushFontSize(0.5f);
+  CherryNextProp("color_text", "#898989");
+  CherryStyle::AddMarginX(8.0f);
+  CherryStyle::RemoveMarginY(8.0f);
+  CherryKit::TextSimple(posText);
+
+  CherryStyle::AddMarginX(8.0f);
+  CherryGUI::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#454545"));
+  CherryGUI::Separator();
+  CherryGUI::PopStyleColor();
+
+  CherryStyle::AddMarginX(8.0f);
+  CherryNextProp("color_text", "#898989");
+  CherryKit::TextSimple(linesText);
+
+  CherryStyle::AddMarginX(8.0f);
+  CherryGUI::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#454545"));
+  CherryGUI::Separator();
+  CherryGUI::PopStyleColor();
+
+  CherryStyle::AddMarginX(8.0f);
+  CherryNextProp("color_text", "#898989");
+  CherryKit::TextSimple(languageText);
+
+  if (m_TextSize != 0.5) {
+    int currentPercent = static_cast<int>(std::round(m_TextSize * 200.0f));
+    CherryStyle::AddMarginX(8.0f);
+    CherryGUI::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#454545"));
+    CherryGUI::Separator();
+    CherryGUI::PopStyleColor();
+
+    CherryStyle::AddMarginX(8.0f);
+    CherryNextProp("color_text", "#898989");
+    CherryKit::TextSimple(std::to_string(currentPercent) + "%%");
+  }
+
+  if (m_AutoRefresh) {
+    CherryStyle::AddMarginX(8.0f);
+    CherryGUI::PushStyleColor(ImGuiCol_Separator, Cherry::HexToRGBA("#454545"));
+    CherryGUI::Separator();
+    CherryGUI::PopStyleColor();
+
+    CherryStyle::AddMarginX(8.0f);
+    CherryKit::TextSimple("AutoRefresh");
+  }
+  CherryStyle::PopFontSize();
+  Cherry::PopFont();
 }
 
 }; // namespace ModuleUI

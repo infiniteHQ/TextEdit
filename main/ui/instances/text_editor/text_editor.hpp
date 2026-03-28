@@ -74,6 +74,22 @@ public:
   std::string m_CurrentLanguageDef = "";
   bool m_CanOverrite = false;
 
+  void ZoomIn() {
+    m_TextSize += 0.05f;
+    if (m_TextSize > 1.15f)
+      m_TextSize = 1.15f;
+  }
+
+  void ZoomOut() {
+    m_TextSize -= 0.05f;
+    if (m_TextSize < 0.35f)
+      m_TextSize = 0.35f;
+  }
+
+  void ResetZoom() {
+    m_TextSize = 0.50f; // 100%
+  }
+
 private:
   VxContext *ctx;
   bool opened;
@@ -85,6 +101,8 @@ private:
   bool m_UndoPending = false;
   bool m_RedoPending = false;
   bool m_SavePending = false;
+  bool m_CopyPending = false;
+  bool m_PastePending = false;
   bool m_FileEdited = true;
   bool m_FileUpdated = true;
 

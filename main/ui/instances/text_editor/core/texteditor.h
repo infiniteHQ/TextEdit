@@ -1809,6 +1809,8 @@ public:
     SetProperty("color_text", "theme:text_area_color_text");
     SetProperty("undo_pending", "false");
     SetProperty("redo_pending", "false");
+    SetProperty("paste_pending", "false");
+    SetProperty("copy_pending", "false");
     SetProperty("save_pending", "false");
     SetProperty("refresh_pending", "false");
 
@@ -1848,18 +1850,28 @@ public:
       SetProperty("save_pending", "false");
     }
 
-    if (GetPropertyAs<bool>("undo_pending")) {
+    if (GetProperty("undo_pending") == "true") {
       if (m_TextEditor.CanUndo()) {
         m_TextEditor.Undo();
       }
       SetProperty("undo_pending", false);
     }
 
-    if (GetPropertyAs<bool>("redo_pending")) {
+    if (GetProperty("redo_pending") == "true") {
       if (m_TextEditor.CanRedo()) {
         m_TextEditor.Redo();
       }
       SetProperty("redo_pending", false);
+    }
+
+    if (GetProperty("copy_pending") == "true") {
+      m_TextEditor.Copy();
+      SetProperty("copy_pending", false);
+    }
+
+    if (GetProperty("paste_pending") == "true") {
+      m_TextEditor.Paste();
+      SetProperty("paste_pending", false);
     }
 
     if (m_FontSize)

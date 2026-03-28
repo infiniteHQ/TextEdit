@@ -14,6 +14,7 @@ find_library(VORTEX_SHARED_LIBRARY vortex_shared HINTS ${CMAKE_CURRENT_SOURCE_DI
 find_library(CHERRY_SHARED_LIBRARY cherry imgui HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/lib/spdlog/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/lib/cherry/lib/imgui")
 
 if(NOT VORTEX_SHARED_LIBRARY)
     message(FATAL_ERROR "Please build/install the vortex core before compiling modules!")
