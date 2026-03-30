@@ -61,7 +61,7 @@ public:
   inline void SetTabSize(int value) {
     // this must be called before text is loaded/edited
     if (document.isEmpty() && transactions.empty()) {
-      document.setTabSize(std::max(1, std::min(8, value)));
+      document.setTabSize((std::max)(1, (std::min)(8, value)));
     }
   }
 
@@ -73,7 +73,7 @@ public:
     return document.isInsertSpacesOnTabs();
   }
   inline void SetLineSpacing(float value) {
-    lineSpacing = std::max(1.0f, std::min(2.0f, value));
+    lineSpacing = (std::max)(1.0f, (std::min)(2.0f, value));
   }
   inline float GetLineSpacing() const { return lineSpacing; }
   inline void SetReadOnlyEnabled(bool value) { readOnly = value; }
@@ -1604,15 +1604,13 @@ protected:
 
   // autocomplete
   bool isAutocompleteTriggered() const {
-    ImGuiIO &io = ImGui::GetIO();
-
-    if (!ImGui::IsKeyPressed(ImGuiKey_Space))
+    if (!CherryGUI::IsKeyPressed(ImGuiKey_Space))
       return false;
 
 #if __APPLE__
-    return io.KeySuper && !io.KeyCtrl && !io.KeyShift && !io.KeyAlt;
+    return CherryGUI::IsKeySuperPressed() && !CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeyShiftPressed() && !CherryGUI::IsKeyAltPressed();
 #else
-    return io.KeyCtrl && !io.KeySuper && !io.KeyShift && !io.KeyAlt;
+    return CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeySuperPressed() && !CherryGUI::IsKeyShiftPressed && !CherryGUI::IsKeyAltPressed();
 #endif
   }
 

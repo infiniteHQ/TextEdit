@@ -309,22 +309,22 @@ FileTypes TextEditorAppWindow::detect_file(const std::string &path) {
 void TextEditorAppWindow::Render() {
   CherryApp.PushComponentPool(&m_ComponentPool);
   bool isWindowFocused =
-      ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+      CherryGUI::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
   bool isWindowHovered =
-      ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
-  bool ctrl = ImGui::GetIO().KeyCtrl;
+      CherryGUI::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+  bool ctrl = CherryGUI::IsKeyCtrlPressed();
 
-  bool vPressed = ImGui::IsKeyPressed(ImGuiKey_V);
-  bool cPressed = ImGui::IsKeyPressed(ImGuiKey_C);
-  bool sPressed = ImGui::IsKeyPressed(ImGuiKey_S);
-  bool yPressed = ImGui::IsKeyPressed(ImGuiKey_Y);
-  bool zeroPressed = ImGui::IsKeyPressed(ImGuiKey_0);
-  bool plusPressed = ImGui::IsKeyPressed(ImGuiKey_KeypadAdd) ||
-                     ImGui::IsKeyPressed(ImGuiKey_Equal);
-  bool minusPressed = ImGui::IsKeyPressed(ImGuiKey_KeypadSubtract) ||
-                      ImGui::IsKeyPressed(ImGuiKey_Minus);
+  bool vPressed = CherryGUI::IsKeyPressed(ImGuiKey_V);
+  bool cPressed = CherryGUI::IsKeyPressed(ImGuiKey_C);
+  bool sPressed = CherryGUI::IsKeyPressed(ImGuiKey_S);
+  bool yPressed = CherryGUI::IsKeyPressed(ImGuiKey_Y);
+  bool zeroPressed = CherryGUI::IsKeyPressed(ImGuiKey_0);
+  bool plusPressed = CherryGUI::IsKeyPressed(ImGuiKey_KeypadAdd) ||
+                     CherryGUI::IsKeyPressed(ImGuiKey_Equal);
+  bool minusPressed = CherryGUI::IsKeyPressed(ImGuiKey_KeypadSubtract) ||
+                      CherryGUI::IsKeyPressed(ImGuiKey_Minus);
 
-  float wheel = ImGui::GetIO().MouseWheel;
+  float wheel = CherryGUI::GetMouseWheel();
 
   if (isWindowFocused && ctrl) {
     if (vPressed) {
