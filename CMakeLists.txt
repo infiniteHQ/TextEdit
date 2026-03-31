@@ -1,25 +1,23 @@
 cmake_minimum_required(VERSION 3.16)
 project(module)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC")
 
 if (MSVC)
     add_compile_options(/utf-8)
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC")
 endif()
 
+
 find_library(VORTEX_SHARED_LIBRARY vortex_shared HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/)
-find_library(CHERRY_SHARED_LIBRARY cherry imgui HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/lib/spdlog/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/lib/cherry/lib/imgui")
 
 if(NOT VORTEX_SHARED_LIBRARY)
-    message(FATAL_ERROR "Please build/install the vortex core before compiling modules!")
-endif()
-if(NOT CHERRY_SHARED_LIBRARY)
     message(FATAL_ERROR "Please build/install the vortex core before compiling modules!")
 endif()
 
@@ -31,9 +29,28 @@ add_library(module SHARED ${SOURCES})
 if(UNIX AND NOT APPLE)
 target_compile_options(module PRIVATE -Wall -Wextra)
 endif()
-target_link_libraries(module PRIVATE ${VORTEX_SHARED_LIBRARY} ${CHERRY_SHARED_LIBRARY})
+
+target_link_libraries(module PRIVATE ${VORTEX_SHARED_LIBRARY})
 target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/vxcore/include/)
 target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/)
+
+if(WIN32)
+    target_compile_definitions(module PRIVATE
+        CHERRY_IMPORT_DLL
+        CHERRY_MULTIAPP
+    )
+
+    find_library(CHERRY_IMPORT_LIB cherry 
+        HINTS 
+            ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/
+            ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/Release
+            ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/Debug
+    )
+    if(NOT CHERRY_IMPORT_LIB)
+        message(FATAL_ERROR "cherry.lib introuvable, rebuilde vortex d'abord!")
+    endif()
+    target_link_libraries(module PRIVATE ${CHERRY_IMPORT_LIB})
+endif()
 
 file(GLOB_RECURSE ASSET_FILES
     CONFIGURE_DEPENDS

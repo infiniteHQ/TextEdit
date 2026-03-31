@@ -540,10 +540,9 @@ void TextEditor::renderCursors() {
     // events unless we do this see https://github.com/ocornut/imgui/issues/8584
     // for details
     if (!readOnly) {
-      auto context = CherryGUI::GetCurrentContext();
-      context->PlatformImeData.WantVisible = true;
-      context->PlatformImeData.InputPos = ImVec2(
-          cursorScreenPos.x - 1.0f, cursorScreenPos.y - context->FontSize);
+      CherryGUI::SetPlatformeImeDataWantVisible(true);
+      CherryGUI::SetPlatformeImeDataInputPos(ImVec2(
+          cursorScreenPos.x - 1.0f, cursorScreenPos.y - CherryGUI::GetFontSize()));
     }
   }
 }
