@@ -312,6 +312,7 @@ void TextEditorAppWindow::Render() {
       CherryGUI::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
   bool isWindowHovered =
       CherryGUI::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
+  bool ctrl = CherryGUI::IsKeyCtrlPressed();
 
   bool vPressed = CherryGUI::IsKeyPressed(ImGuiKey_V);
   bool cPressed = CherryGUI::IsKeyPressed(ImGuiKey_C);
@@ -324,6 +325,7 @@ void TextEditorAppWindow::Render() {
                       CherryGUI::IsKeyPressed(ImGuiKey_Minus);
 
   float wheel = CherryGUI::GetMouseWheel();
+
   if (isWindowFocused && ctrl) {
     if (vPressed) {
       m_PastePending = true;

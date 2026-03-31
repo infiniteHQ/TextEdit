@@ -1,40 +1,51 @@
 @echo off
 setlocal enabledelayedexpansion
 
-if exist ..\build rd /s /q ..\build
-if exist ..\dist rd /s /q ..\dist
-
-if exist ..\lib\vortex\tests\project\.vx\modules rd /s /q ..\lib\vortex\tests\project\.vx\modules
-
+rd /s /q ..\dist 2>nul
+rd /s /q ..\build 2>nul
+call build_vx.bat
+rd /s /q ..\lib\vortex\tests\project\.vx\modules\ 2>nul
 mkdir ..\build
 cd ..\build
 
-cmake -G "Visual Studio 17" -A x64 ..
+cmake -G "Visual Studio 17 2022" -A x64 ..
 
 for /f %%i in ('powershell -command "(Get-WmiObject -Class Win32_Processor).NumberOfLogicalProcessors"') do set THREADS=%%i
-
 cmake --build . --config Release -- /m:%THREADS%
 cmake --install . --config Release
 
 cd ..\scripts
 
-for /f "tokens=*" %%A in ('powershell -command "Get-Content ../module.json | ConvertFrom-Json | Select-Object -Property name,version | ForEach-Object { $_.name + ' ' + $_.version }"') do (
-    for /f "tokens=1,2" %%B in ("%%A") do (
-        set NAME=%%B
-        set VERSION=%%C
-    )
-)
+set MODULE_JSON_PATH=..\module.json
+for /f "delims=" %%i in ('powershell -command "(Get-Content '%MODULE_JSON_PATH%' | ConvertFrom-Json).name"') do set NAME=%%i
+for /f "delims=" %%i in ('powershell -command "(Get-Content '%MODULE_JSON_PATH%' | ConvertFrom-Json).version"') do set VERSION=%%i
+set FOLDER_NAME=%NAME%-%VERSION%
 
-mkdir ..\dist
+mkdir "..\dist\%FOLDER_NAME%"
 
-xcopy ..\build ..\dist\build /E /I /Y
-xcopy ..\lib ..\dist\lib /E /I /Y 2>nul
-xcopy ..\assets ..\dist\assets /E /I /Y 2>nul
-copy ..\module.json ..\dist\module.json /Y
+xcopy /e /i /y "..\build\Release\*" "..\dist\%FOLDER_NAME%\" 2>nul
+xcopy /e /i /y "..\lib" "..\dist\%FOLDER_NAME%\lib\" 2>nul
+xcopy /e /i /y "..\main\assets\*" "..\dist\%FOLDER_NAME%\" 2>nul
+copy "..\module.json" "..\dist\%FOLDER_NAME%\" 2>nul
+copy "..\LICENSE" "..\dist\%FOLDER_NAME%\" 2>nul
+copy "..\CREDITS" "..\dist\%FOLDER_NAME%\" 2>nul
+copy "..\README.md" "..\dist\%FOLDER_NAME%\" 2>nul
 
-rd /s /q ..\dist\build\CMakeFiles 2>nul
-rd /s /q ..\dist\scripts 2>nul
-rd /s /q ..\dist\.git 2>nul
-rd /s /q ..\dist\.vscode 2>nul
-rd /s /q ..\dist\lib 2>nul
-del /q ..\dist\buil_
+rd /s /q "..\dist\%FOLDER_NAME%\CMakeFiles" 2>nul
+rd /s /q "..\dist\%FOLDER_NAME%\scripts" 2>nul
+rd /s /q "..\dist\%FOLDER_NAME%\.git" 2>nul
+rd /s /q "..\dist\%FOLDER_NAME%\.vscode" 2>nul
+rd /s /q "..\dist\%FOLDER_NAME%\lib" 2>nul
+del "..\dist\%FOLDER_NAME%\remove_resources_if_exists.cmake" 2>nul
+del "..\dist\%FOLDER_NAME%\cmake_install.cmake" 2>nul
+del "..\dist\%FOLDER_NAME%\CMakeCache.txt" 2>nul
+del "..\dist\%FOLDER_NAME%\dist.tar.gz" 2>nul
+del "..\dist\%FOLDER_NAME%\Makefile" 2>nul
+del "..\dist\%FOLDER_NAME%\.gitmodules" 2>nul
+del "..\dist\%FOLDER_NAME%\CMakeLists.txt" 2>nul
+
+set TAR_NAME=..\build\%FOLDER_NAME%.tar.gz
+powershell -command "tar -czf '%TAR_NAME%' -C '..\dist' '%FOLDER_NAME%'"
+echo Archive created : %TAR_NAME%
+
+endlocal
