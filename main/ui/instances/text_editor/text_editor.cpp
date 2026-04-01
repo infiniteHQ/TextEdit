@@ -99,13 +99,15 @@ void TextEditorAppWindow::SetupRenderCallback() {
 
 void TextEditorAppWindow::RenderMenubar() {
   CherryGUI::SetCursorPosX(CherryGUI::GetCursorPosX() + 3.0f);
-  CherryNextComponent.SetProperty("padding_y", "6.0f");
-  CherryNextComponent.SetProperty("padding_x", "10.0f");
-  
+
   if (!m_FileEdited) {
     CherryGUI::BeginDisabled();
   }
 
+  CherryNextComponent.SetProperty("padding_y", "5.5f");
+  CherryNextComponent.SetProperty("padding_x", "6.0f");
+  CherryNextComponent.SetProperty("size_x", "18");
+  CherryNextComponent.SetProperty("size_y", "18");
   if (CherryKit::ButtonImage(
           TextEdit::GetPath("/resources/icons/icon_save.png"))
           .GetDataAs<bool>("isClicked")) {
@@ -116,8 +118,10 @@ void TextEditorAppWindow::RenderMenubar() {
     CherryGUI::EndDisabled();
   }
 
-  CherryNextComponent.SetProperty("padding_y", "6.0f");
-  CherryNextComponent.SetProperty("padding_x", "10.0f");
+  CherryNextComponent.SetProperty("padding_y", "5.5f");
+  CherryNextComponent.SetProperty("padding_x", "6.0f");
+  CherryNextComponent.SetProperty("size_x", "18");
+  CherryNextComponent.SetProperty("size_y", "18");
   if (CherryKit::ButtonImage(
           TextEdit::GetPath("/resources/icons/icon_refresh.png"))
           .GetDataAs<bool>("isClicked")) {
@@ -458,7 +462,7 @@ void TextEditorAppWindow::RenderRightMenubar() {
 
     CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
 
-    if (CherryGUI::Button("-", ImVec2(25, 20))) {
+    if (CherryGUI::Button("-", ImVec2(20, 20))) {
       ZoomOut();
     }
 
@@ -470,7 +474,7 @@ void TextEditorAppWindow::RenderRightMenubar() {
 
     CherryGUI::SameLine();
 
-    if (CherryGUI::Button("+", ImVec2(25, 20))) {
+    if (CherryGUI::Button("+", ImVec2(20, 20))) {
       ZoomIn();
     }
 
@@ -481,16 +485,16 @@ void TextEditorAppWindow::RenderRightMenubar() {
     CherryGUI::PopStyleVar();
   };
 
-  ImVec2 popupSize(220, 100);
+  ImVec2 popupSize(220, 63);
   ImVec2 mousePos = CherryGUI::GetMousePos();
   ImVec2 popupPos = ImVec2(mousePos.x - popupSize.x, mousePos.y + 5);
 
   CherryGUI::SetNextWindowPos(popupPos, ImGuiCond_Appearing);
   CherryGUI::SetNextWindowSize(popupSize, ImGuiCond_Always);
 
-  CherryGUI::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f));
+  CherryGUI::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
   CherryGUI::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
-  CherryGUI::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#454545"));
+  CherryGUI::PushStyleColor(ImGuiCol_Border, Cherry::HexToRGBA("#343434"));
   CherryGUI::PushStyleColor(ImGuiCol_PopupBg, Cherry::HexToRGBA("#121212E6"));
 
   if (CherryGUI::BeginPopup("SettingsMenuPopup",
