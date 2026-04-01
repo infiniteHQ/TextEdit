@@ -1608,9 +1608,11 @@ protected:
       return false;
 
 #if __APPLE__
-    return CherryGUI::IsKeySuperPressed() && !CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeyShiftPressed() && !CherryGUI::IsKeyAltPressed();
+    return CherryGUI::IsKeySuperPressed() && !CherryGUI::IsKeyCtrlPressed() &&
+           !CherryGUI::IsKeyShiftPressed() && !CherryGUI::IsKeyAltPressed();
 #else
-    return CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeySuperPressed() && !CherryGUI::IsKeyShiftPressed && !CherryGUI::IsKeyAltPressed();
+    return CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeySuperPressed() &&
+           !CherryGUI::IsKeyShiftPressed && !CherryGUI::IsKeyAltPressed();
 #endif
   }
 
@@ -1805,6 +1807,7 @@ public:
     SetIdentifier(id);
     // Colors
     SetProperty("color_text", "theme:text_area_color_text");
+    SetProperty("find_pending", "false");
     SetProperty("undo_pending", "false");
     SetProperty("redo_pending", "false");
     SetProperty("paste_pending", "false");
@@ -1853,6 +1856,11 @@ public:
         m_TextEditor.Undo();
       }
       SetProperty("undo_pending", false);
+    }
+
+    if (GetProperty("find_pending") == "true") {
+      m_TextEditor.OpenFindReplaceWindow();
+      SetProperty("find_pending", false);
     }
 
     if (GetProperty("redo_pending") == "true") {

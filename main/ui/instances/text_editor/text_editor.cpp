@@ -6,6 +6,54 @@
 #include <string>
 
 namespace ModuleUI {
+
+void TextEditorAppWindow::PlusMinuxWidget(bool plus) {
+  ImVec2 btn_pos = ImGui::GetCursorScreenPos();
+  float btn_size = 22.0f;
+  float rounding = 4.0f;
+  float bar_thickness = 2.0f;
+  float bar_half = 5.0f;
+
+  ImVec2 btn_min = btn_pos;
+  ImVec2 btn_max = ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size);
+  ImVec2 center =
+      ImVec2(btn_pos.x + btn_size * 0.5f, btn_pos.y + btn_size * 0.5f);
+
+  ImGui::InvisibleButton("##zoom_in", ImVec2(btn_size, btn_size));
+  bool hovered = ImGui::IsItemHovered();
+  bool clicked = ImGui::IsItemClicked();
+
+  if (plus) {
+    if (clicked)
+      ZoomIn();
+  } else {
+    if (clicked)
+      ZoomOut();
+  }
+
+  ImDrawList *dl = ImGui::GetWindowDrawList();
+
+  ImU32 bg_color =
+      hovered ? IM_COL32(80, 80, 80, 255) : IM_COL32(55, 55, 55, 255);
+
+  dl->AddRectFilled(btn_min, btn_max, bg_color, rounding);
+
+  dl->AddRect(btn_min, btn_max, IM_COL32(120, 120, 120, 180), rounding, 0,
+              1.0f);
+
+  ImU32 fg_color = IM_COL32(220, 220, 220, 255);
+
+  dl->AddRectFilled(
+      ImVec2(center.x - bar_half, center.y - bar_thickness * 0.5f),
+      ImVec2(center.x + bar_half, center.y + bar_thickness * 0.5f), fg_color);
+
+  if (plus) {
+    dl->AddRectFilled(
+        ImVec2(center.x - bar_thickness * 0.5f, center.y - bar_half),
+        ImVec2(center.x + bar_thickness * 0.5f, center.y + bar_half), fg_color);
+  }
+}
+
 TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
                                          const std::string &name) {
   namespace fs = std::filesystem;
@@ -16,8 +64,9 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
 
   m_Type = detect_file(path);
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
-  std::string image_name = GetFileTypeStr(m_Type) + ".png";
-  m_AppWindow->SetIcon(TextEdit::GetPath("/resources/files/" + image_name));
+
+  // TODO : Or load custom icons for each file types
+  m_AppWindow->SetIcon(TextEdit::GetPath("resources/icons/edit.png"));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
   m_AppWindow->SetLeftBottombarCallback([this]() { RenderBottombar(); });
@@ -133,8 +182,10 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("padding_y", "6.0f");
   CherryNextComponent.SetProperty("padding_x", "10.0f");
   if (CherryKit::ButtonImageText(
-          "Find", TextEdit::GetPath("/resources/icons/icon_refresh.png"))
+          "Find",
+          TextEdit::GetPath("/resources/icons/icon_magnifying_glass.png"))
           .GetDataAs<bool>("isClicked")) {
+    m_FindPending = true;
   }
 }
 
@@ -318,6 +369,7 @@ void TextEditorAppWindow::Render() {
       CherryGUI::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
   bool ctrl = CherryGUI::IsKeyCtrlPressed();
 
+  bool fPressed = CherryGUI::IsKeyPressed(ImGuiKey_F);
   bool vPressed = CherryGUI::IsKeyPressed(ImGuiKey_V);
   bool cPressed = CherryGUI::IsKeyPressed(ImGuiKey_C);
   bool sPressed = CherryGUI::IsKeyPressed(ImGuiKey_S);
@@ -342,6 +394,9 @@ void TextEditorAppWindow::Render() {
     }
     if (yPressed) {
       m_RedoPending = true;
+    }
+    if (fPressed) {
+      m_FindPending = true;
     }
 
     if (plusPressed) {
@@ -397,6 +452,11 @@ void TextEditorAppWindow::Render() {
   if (m_UndoPending) {
     editor.SetProperty("undo_pending", "true");
     m_UndoPending = false;
+  }
+
+  if (m_FindPending) {
+    editor.SetProperty("find_pending", "true");
+    m_FindPending = false;
   }
 
   if (m_RedoPending) {
@@ -461,10 +521,7 @@ void TextEditorAppWindow::RenderRightMenubar() {
     int currentPercent = static_cast<int>(std::round(m_TextSize * 200.0f));
 
     CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));
-
-    if (CherryGUI::Button("-", ImVec2(20, 20))) {
-      ZoomOut();
-    }
+    PlusMinuxWidget(false);
 
     CherryGUI::SameLine();
 
@@ -474,10 +531,7 @@ void TextEditorAppWindow::RenderRightMenubar() {
 
     CherryGUI::SameLine();
 
-    if (CherryGUI::Button("+", ImVec2(20, 20))) {
-      ZoomIn();
-    }
-
+    PlusMinuxWidget(true);
     if (CherryGUI::IsItemHovered() && CherryGUI::IsMouseDoubleClicked(0)) {
       ResetZoom();
     }
@@ -507,16 +561,9 @@ void TextEditorAppWindow::RenderRightMenubar() {
     CherryNextComponent.SetProperty("padding_y", "4");
 
     auto cmp = CherryKit::TableSimple(
-        CherryID("Parameters"), "fAf",
+        CherryID("Parameters"), "ParamTable",
         {{CherryKit::KeyValCustom("Zoom", zoomRender)},
          {CherryKit::KeyValBool("Auto refresh", &m_AutoRefresh)}});
-
-    if (std::abs(m_TextSize - 0.50f) > 0.001f) {
-      CherryGUI::Separator();
-      if (CherryGUI::Selectable("Reset to 100%")) {
-        ResetZoom();
-      }
-    }
 
     CherryGUI::EndPopup();
   }

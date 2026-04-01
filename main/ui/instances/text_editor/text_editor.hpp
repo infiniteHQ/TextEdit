@@ -64,6 +64,7 @@ public:
   void Undo();
   void Redo();
 
+  void PlusMinuxWidget(bool plus);
   float m_TextSize = 0.5f;
   float m_TextSizeMin = 0.3f;
   float m_TextSizeMax = 2.0f;
@@ -98,6 +99,7 @@ private:
   FileTypes m_Type;
 
   // Editor actions
+  bool m_FindPending = false;
   bool m_UndoPending = false;
   bool m_RedoPending = false;
   bool m_SavePending = false;
