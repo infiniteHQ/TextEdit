@@ -153,20 +153,20 @@ void TextEditor::render(const char *title, const ImVec2 &size, bool border) {
 
     switch (scrollToAlignment) {
     case Scroll::alignTop:
-      scrollY =
-          (std::max)(0.0f, static_cast<float>(scrollToLineNumber) * glyphSize.y);
+      scrollY = (std::max)(0.0f, static_cast<float>(scrollToLineNumber) *
+                                     glyphSize.y);
       break;
 
     case Scroll::alignMiddle:
-      scrollY = (std::max)(
-          0.0f, static_cast<float>(scrollToLineNumber - visibleLines / 2) *
-                    glyphSize.y);
+      scrollY = (std::max)(0.0f, static_cast<float>(scrollToLineNumber -
+                                                    visibleLines / 2) *
+                                     glyphSize.y);
       break;
 
     case Scroll::alignBottom:
-      scrollY = (std::max)(
-          0.0f, static_cast<float>(scrollToLineNumber - (visibleLines - 1)) *
-                    glyphSize.y);
+      scrollY = (std::max)(0.0f, static_cast<float>(scrollToLineNumber -
+                                                    (visibleLines - 1)) *
+                                     glyphSize.y);
       break;
     }
 
@@ -189,12 +189,13 @@ void TextEditor::render(const char *title, const ImVec2 &size, bool border) {
   // ensure correct Dear ImGui context
   CherryGUI::SetNextWindowContentSize(totalSize);
   CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-  CherryGUI::PushStyleColor(ImGuiCol_ChildBg, CherryGUI::ColorConvertU32ToFloat4(
-                                              palette.get(Color::background)));
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ChildBg,
+      CherryGUI::ColorConvertU32ToFloat4(palette.get(Color::background)));
   CherryGUI::BeginChild(title, size, border,
-                    ImGuiWindowFlags_NoMove |
-                        ImGuiWindowFlags_HorizontalScrollbar |
-                        ImGuiWindowFlags_NoNavInputs);
+                        ImGuiWindowFlags_NoMove |
+                            ImGuiWindowFlags_HorizontalScrollbar |
+                            ImGuiWindowFlags_NoNavInputs);
   lastRenderOrigin = CherryGUI::GetCursorScreenPos();
 
   // handle keyboard and mouse inputs
@@ -233,16 +234,18 @@ void TextEditor::render(const char *title, const ImVec2 &size, bool border) {
   languageChanged = false;
 
   // determine view parameters
-  firstVisibleColumn = (std::max)(
-      static_cast<int>(std::floor(CherryGUI::GetScrollX() / glyphSize.x)), 0);
+  firstVisibleColumn = (std::max)(static_cast<int>(std::floor(
+                                      CherryGUI::GetScrollX() / glyphSize.x)),
+                                  0);
   lastVisibleColumn = static_cast<int>(
       std::floor((CherryGUI::GetScrollX() + visibleWidth) / glyphSize.x));
-  firstVisibleLine = (std::max)(
-      static_cast<int>(std::floor(CherryGUI::GetScrollY() / glyphSize.y)), 0);
+  firstVisibleLine = (std::max)(static_cast<int>(std::floor(
+                                    CherryGUI::GetScrollY() / glyphSize.y)),
+                                0);
   lastVisibleLine =
       (std::min)(static_cast<int>(std::floor(
-                   (CherryGUI::GetScrollY() + visibleHeight) / glyphSize.y)),
-               document.lineCount() - 1);
+                     (CherryGUI::GetScrollY() + visibleHeight) / glyphSize.y)),
+                 document.lineCount() - 1);
 
   // render editor parts
   renderSelections();
@@ -324,8 +327,8 @@ void TextEditor::renderSelections() {
                       glyphSize.x;
           auto y = cursorScreenPos.y + line * glyphSize.y;
           CherryGUI::AddRectFilled(drawList, ImVec2(left, y),
-                                  ImVec2(right, y + glyphSize.y),
-                                  palette.get(Color::selection));
+                                   ImVec2(right, y + glyphSize.y),
+                                   palette.get(Color::selection));
         }
       }
     }
@@ -351,7 +354,8 @@ void TextEditor::renderMarkers() {
           auto right = cursorScreenPos.x + lineNumberRightOffset;
           auto start = ImVec2(left, y);
           auto end = ImVec2(right, y + glyphSize.y);
-          CherryGUI::AddRectFilled(drawList, start, end, marker.lineNumberColor);
+          CherryGUI::AddRectFilled(drawList, start, end,
+                                   marker.lineNumberColor);
 
           if (marker.lineNumberTooltip.size() &&
               CherryGUI::IsMouseHoveringRect(start, end)) {
@@ -400,14 +404,15 @@ void TextEditor::renderMatchingBrackets() {
             bracket.start.line <= lastVisibleLine &&
             bracket.end.line > firstVisibleLine) {
 
-          auto lineX =
-              cursorScreenPos.x + textOffset +
-              (std::min)(bracket.start.column, bracket.end.column) * glyphSize.x;
+          auto lineX = cursorScreenPos.x + textOffset +
+                       (std::min)(bracket.start.column, bracket.end.column) *
+                           glyphSize.x;
           auto startY =
               cursorScreenPos.y + (bracket.start.line + 1) * glyphSize.y;
           auto endY = cursorScreenPos.y + bracket.end.line * glyphSize.y;
-          CherryGUI::AddLine(drawList, ImVec2(lineX, startY), ImVec2(lineX, endY),
-                            palette.get(Color::whitespace), 1.0f);
+          CherryGUI::AddLine(drawList, ImVec2(lineX, startY),
+                             ImVec2(lineX, endY),
+                             palette.get(Color::whitespace), 1.0f);
         }
       }
 
@@ -422,20 +427,21 @@ void TextEditor::renderMatchingBrackets() {
             cursorScreenPos.x + textOffset + active->start.column * glyphSize.x;
         auto y1 = cursorScreenPos.y + active->start.line * glyphSize.y;
         CherryGUI::AddRectFilled(drawList, ImVec2(x1, y1),
-                                ImVec2(x1 + glyphSize.x, y1 + glyphSize.y),
-                                palette.get(Color::matchingBracketBackground));
+                                 ImVec2(x1 + glyphSize.x, y1 + glyphSize.y),
+                                 palette.get(Color::matchingBracketBackground));
 
         auto x2 =
             cursorScreenPos.x + textOffset + active->end.column * glyphSize.x;
         auto y2 = cursorScreenPos.y + active->end.line * glyphSize.y;
         CherryGUI::AddRectFilled(drawList, ImVec2(x2, y2),
-                                ImVec2(x2 + glyphSize.x, y2 + glyphSize.y),
-                                palette.get(Color::matchingBracketBackground));
+                                 ImVec2(x2 + glyphSize.x, y2 + glyphSize.y),
+                                 palette.get(Color::matchingBracketBackground));
 
         if (active->end.line - active->start.line > 1) {
           auto lineX = (std::min)(x1, x2);
-          CherryGUI::AddLine(drawList, ImVec2(lineX, y1 + glyphSize.y), ImVec2(lineX, y2),
-                            palette.get(Color::matchingBracketActive), 1.0f);
+          CherryGUI::AddLine(drawList, ImVec2(lineX, y1 + glyphSize.y),
+                             ImVec2(lineX, y2),
+                             palette.get(Color::matchingBracketActive), 1.0f);
         }
       }
     }
@@ -489,12 +495,12 @@ void TextEditor::renderText() {
           const auto x = glyphPos.x + glyphSize.x * 0.5f;
           const auto y = glyphPos.y + fontSize * 0.5f;
           CherryGUI::AddCircleFilled(drawList, ImVec2(x, y), 1.5f,
-                                    palette.get(Color::whitespace), 4);
+                                     palette.get(Color::whitespace), 4);
         }
 
       } else {
-        CherryGUI::RenderChar(font, drawList, fontSize, glyphPos, palette.get(glyph.color),
-                         codepoint);
+        CherryGUI::RenderChar(font, drawList, fontSize, glyphPos,
+                              palette.get(glyph.color), codepoint);
       }
 
       index++;
@@ -517,8 +523,7 @@ void TextEditor::renderCursors() {
   if (CherryGUI::IsWindowFocused()) {
     ImVec2 cursorScreenPos = CherryGUI::GetCursorScreenPos();
 
-    if (!CherryGUI::GetCursorBlink() ||
-        cursorAnimationTimer < 0.5f) {
+    if (!CherryGUI::GetCursorBlink() || cursorAnimationTimer < 0.5f) {
       auto drawList = CherryGUI::GetWindowDrawList();
 
       for (auto &cursor : cursors) {
@@ -529,8 +534,8 @@ void TextEditor::renderCursors() {
               cursorScreenPos.x + textOffset + pos.column * glyphSize.x - 1;
           auto y = cursorScreenPos.y + pos.line * glyphSize.y;
           CherryGUI::AddRectFilled(drawList, ImVec2(x, y),
-                                  ImVec2(x + cursorWidth, y + glyphSize.y),
-                                  palette.get(Color::cursor));
+                                   ImVec2(x + cursorWidth, y + glyphSize.y),
+                                   palette.get(Color::cursor));
         }
       }
     }
@@ -541,8 +546,9 @@ void TextEditor::renderCursors() {
     // for details
     if (!readOnly) {
       CherryGUI::SetPlatformeImeDataWantVisible(true);
-      CherryGUI::SetPlatformeImeDataInputPos(ImVec2(
-          cursorScreenPos.x - 1.0f, cursorScreenPos.y - CherryGUI::GetFontSize()));
+      CherryGUI::SetPlatformeImeDataInputPos(
+          ImVec2(cursorScreenPos.x - 1.0f,
+                 cursorScreenPos.y - CherryGUI::GetFontSize()));
     }
   }
 }
@@ -555,9 +561,10 @@ void TextEditor::renderMargin() {
   if ((decoratorWidth != 0.0f && decoratorCallback) || showLineNumbers) {
     // erase background in case we are scrolling horizontally
     if (CherryGUI::GetScrollX() > 0.0f) {
-      CherryGUI::AddRectFilled(CherryGUI::GetWindowDrawList(),
-          CherryGUI::GetWindowPos(),
-          CherryGUI::GetWindowPos() + ImVec2(textOffset, CherryGUI::GetWindowSize().y),
+      CherryGUI::AddRectFilled(
+          CherryGUI::GetWindowDrawList(), CherryGUI::GetWindowPos(),
+          CherryGUI::GetWindowPos() +
+              ImVec2(textOffset, CherryGUI::GetWindowSize().y),
           palette.get(Color::background));
     }
   }
@@ -581,7 +588,7 @@ void TextEditor::renderLineNumbers() {
           (i == curserLine) ? Color::currentLineNumber : Color::lineNumber;
       auto number = std::to_string(i + 1);
       CherryGUI::AddText(drawList, position + ImVec2(-width, i * glyphSize.y),
-                        palette.get(foreground), number.c_str());
+                         palette.get(foreground), number.c_str());
     }
   }
 }
@@ -641,8 +648,9 @@ void TextEditor::renderScrollbarMiniMap() {
         auto ly1 = std::round(rect.Min.y + begin.line * lineHeight);
         auto ly2 = std::round(rect.Min.y + (end.line + 1) * lineHeight);
 
-        CherryGUI::AddRectFilled(drawList, ImVec2(left, ly1), ImVec2(right, ly2),
-                                palette.get(Color::selection));
+        CherryGUI::AddRectFilled(drawList, ImVec2(left, ly1),
+                                 ImVec2(right, ly2),
+                                 palette.get(Color::selection));
       }
 
       // render marker locations
@@ -657,7 +665,7 @@ void TextEditor::renderScrollbarMiniMap() {
 
             auto ly = std::round(rect.Min.y + line * lineHeight);
             CherryGUI::AddRectFilled(drawList, ImVec2(left, ly),
-                                    ImVec2(right, ly + lineHeight), color);
+                                     ImVec2(right, ly + lineHeight), color);
           }
         }
       }
@@ -676,28 +684,30 @@ void TextEditor::renderPanScrollIndicator() {
     auto drawList = CherryGUI::GetWindowDrawList();
     auto center = CherryGUI::GetWindowPos() + CherryGUI::GetWindowSize() / 2.0f;
     static constexpr int alpha = 160;
-    CherryGUI::AddCircleFilled(drawList, center, 20.0f, IM_COL32(255, 255, 255, alpha));
-    CherryGUI::AddCircle(drawList, center, 5.0f, IM_COL32(0, 0, 0, alpha), 0, 2.0f);
+    CherryGUI::AddCircleFilled(drawList, center, 20.0f,
+                               IM_COL32(255, 255, 255, alpha));
+    CherryGUI::AddCircle(drawList, center, 5.0f, IM_COL32(0, 0, 0, alpha), 0,
+                         2.0f);
 
     CherryGUI::AddTriangle(drawList, ImVec2(center.x - 15.0f, center.y),
-                          ImVec2(center.x - 8.0f, center.y - 4.0f),
-                          ImVec2(center.x - 8.0f, center.y + 4.0f),
-                          IM_COL32(0, 0, 0, alpha), 2.0f);
+                           ImVec2(center.x - 8.0f, center.y - 4.0f),
+                           ImVec2(center.x - 8.0f, center.y + 4.0f),
+                           IM_COL32(0, 0, 0, alpha), 2.0f);
 
     CherryGUI::AddTriangle(drawList, ImVec2(center.x + 15.0f, center.y),
-                          ImVec2(center.x + 8.0f, center.y - 4.0f),
-                          ImVec2(center.x + 8.0f, center.y + 4.0f),
-                          IM_COL32(0, 0, 0, alpha), 2.0f);
+                           ImVec2(center.x + 8.0f, center.y - 4.0f),
+                           ImVec2(center.x + 8.0f, center.y + 4.0f),
+                           IM_COL32(0, 0, 0, alpha), 2.0f);
 
     CherryGUI::AddTriangle(drawList, ImVec2(center.x, center.y - 15.0f),
-                          ImVec2(center.x - 4.0f, center.y - 8.0f),
-                          ImVec2(center.x + 4.0f, center.y - 8.0f),
-                          IM_COL32(0, 0, 0, alpha), 2.0f);
+                           ImVec2(center.x - 4.0f, center.y - 8.0f),
+                           ImVec2(center.x + 4.0f, center.y - 8.0f),
+                           IM_COL32(0, 0, 0, alpha), 2.0f);
 
     CherryGUI::AddTriangle(drawList, ImVec2(center.x, center.y + 15.0f),
-                          ImVec2(center.x - 4.0f, center.y + 8.0f),
-                          ImVec2(center.x + 4.0f, center.y + 8.0f),
-                          IM_COL32(0, 0, 0, alpha), 2.0f);
+                           ImVec2(center.x - 4.0f, center.y + 8.0f),
+                           ImVec2(center.x + 4.0f, center.y + 8.0f),
+                           IM_COL32(0, 0, 0, alpha), 2.0f);
   }
 }
 
@@ -759,9 +769,11 @@ void TextEditor::handleKeyboardInputs() {
       shrinkSelectionsToCurlyBrackets();
     } else if (isCtrlShift && CherryGUI::IsKeyPressed(ImGuiKey_RightArrow)) {
       growSelectionsToCurlyBrackets();
-    } else if (isOptionalAltShift && CherryGUI::IsKeyPressed(ImGuiKey_LeftArrow)) {
+    } else if (isOptionalAltShift &&
+               CherryGUI::IsKeyPressed(ImGuiKey_LeftArrow)) {
       moveLeft(shift, alt);
-    } else if (isOptionalAltShift && CherryGUI::IsKeyPressed(ImGuiKey_RightArrow)) {
+    } else if (isOptionalAltShift &&
+               CherryGUI::IsKeyPressed(ImGuiKey_RightArrow)) {
       moveRight(shift, alt);
     }
 #else
@@ -769,7 +781,8 @@ void TextEditor::handleKeyboardInputs() {
       shrinkSelectionsToCurlyBrackets();
     } else if (isShiftAlt && CherryGUI::IsKeyPressed(ImGuiKey_RightArrow)) {
       growSelectionsToCurlyBrackets();
-    } else if (isOptionalCtrlShift && CherryGUI::IsKeyPressed(ImGuiKey_LeftArrow)) {
+    } else if (isOptionalCtrlShift &&
+               CherryGUI::IsKeyPressed(ImGuiKey_LeftArrow)) {
       moveLeft(shift, ctrl);
     } else if (isOptionalCtrlShift &&
                CherryGUI::IsKeyPressed(ImGuiKey_RightArrow)) {
@@ -784,12 +797,14 @@ void TextEditor::handleKeyboardInputs() {
     } else if (isOptionalShiftShortcut &&
                CherryGUI::IsKeyPressed(ImGuiKey_UpArrow)) {
       moveToTop(shift);
-    } else if (isOptionalShiftShortcut && CherryGUI::IsKeyPressed(ImGuiKey_Home)) {
+    } else if (isOptionalShiftShortcut &&
+               CherryGUI::IsKeyPressed(ImGuiKey_Home)) {
       moveToTop(shift);
     } else if (isOptionalShiftShortcut &&
                CherryGUI::IsKeyPressed(ImGuiKey_DownArrow)) {
       moveToBottom(shift);
-    } else if (isOptionalShiftShortcut && CherryGUI::IsKeyPressed(ImGuiKey_End)) {
+    } else if (isOptionalShiftShortcut &&
+               CherryGUI::IsKeyPressed(ImGuiKey_End)) {
       moveToBottom(shift);
     } else if (isOptionalShift && CherryGUI::IsKeyPressed(ImGuiKey_Home)) {
       moveToStartOfLine(shift);
@@ -934,24 +949,25 @@ void TextEditor::handleKeyboardInputs() {
       }
     }
 
-// handle regular text
-int charCount = CherryGUI::GetInputQueueCharactersCount();
+    // handle regular text
+    int charCount = CherryGUI::GetInputQueueCharactersCount();
 
-if (charCount > 0) {
-    // ignore Ctrl inputs, but allow Alt+Ctrl (AltGr)
-    if (!(CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeyAltPressed()) && !readOnly) {
-        
+    if (charCount > 0) {
+      // ignore Ctrl inputs, but allow Alt+Ctrl (AltGr)
+      if (!(CherryGUI::IsKeyCtrlPressed() && !CherryGUI::IsKeyAltPressed()) &&
+          !readOnly) {
+
         for (int i = 0; i < charCount; i++) {
-            ImWchar character = CherryGUI::GetInputQueueCharacter(i);
+          ImWchar character = CherryGUI::GetInputQueueCharacter(i);
 
-            if (character == '\n' || character >= 32) {
-                handleCharacter(character);
-            }
+          if (character == '\n' || character >= 32) {
+            handleCharacter(character);
+          }
         }
-    }
+      }
 
-    CherryGUI::ClearInputQueueCharacters();
-}
+      CherryGUI::ClearInputQueueCharacters();
+    }
   }
 }
 
@@ -1085,9 +1101,10 @@ void TextEditor::handleMouseInteractions() {
       auto click = CherryGUI::IsMouseClicked(ImGuiMouseButton_Left);
       auto doubleClick = CherryGUI::IsMouseDoubleClicked(ImGuiMouseButton_Left);
       auto now = static_cast<float>(CherryGUI::GetTime());
-      auto tripleClick = click && !doubleClick &&
-                         (lastClickTime != -1.0f &&
-                          (now - lastClickTime) < CherryGUI::GetMouseDoubleClicktime());
+      auto tripleClick =
+          click && !doubleClick &&
+          (lastClickTime != -1.0f &&
+           (now - lastClickTime) < CherryGUI::GetMouseDoubleClicktime());
 
       if (click || doubleClick || tripleClick) {
         lastClickTime = tripleClick ? -1.0f : now;
@@ -4299,15 +4316,17 @@ static bool latchButton(const char *label, bool *value, const ImVec2 &size) {
   if (*value) {
     CherryGUI::PushStyleColor(ImGuiCol_Button, colors[ImGuiCol_ButtonActive]);
     CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
-                          colors[ImGuiCol_ButtonActive]);
+                              colors[ImGuiCol_ButtonActive]);
     CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
-                          colors[ImGuiCol_TableBorderLight]);
+                              colors[ImGuiCol_TableBorderLight]);
 
   } else {
-    CherryGUI::PushStyleColor(ImGuiCol_Button, colors[ImGuiCol_TableBorderLight]);
+    CherryGUI::PushStyleColor(ImGuiCol_Button,
+                              colors[ImGuiCol_TableBorderLight]);
     CherryGUI::PushStyleColor(ImGuiCol_ButtonHovered,
-                          colors[ImGuiCol_TableBorderLight]);
-    CherryGUI::PushStyleColor(ImGuiCol_ButtonActive, colors[ImGuiCol_ButtonActive]);
+                              colors[ImGuiCol_TableBorderLight]);
+    CherryGUI::PushStyleColor(ImGuiCol_ButtonActive,
+                              colors[ImGuiCol_ButtonActive]);
   }
 
   CherryGUI::Button(label, size);
@@ -4362,15 +4381,18 @@ void TextEditor::renderFindReplace(ImVec2 pos, float width) {
                         style.ItemSpacing.x * 2.0f;
     auto button2Width = CherryGUI::CalcTextSize(findAllButtonLabel.c_str()).x +
                         style.ItemSpacing.x * 2.0f;
-    auto optionWidth = CherryGUI::CalcTextSize("Aa").x + style.ItemSpacing.x * 2.0f;
+    auto optionWidth =
+        CherryGUI::CalcTextSize("Aa").x + style.ItemSpacing.x * 2.0f;
 
     if (!readOnly) {
-      button1Width = (std::max)(
-          button1Width, CherryGUI::CalcTextSize(replaceButtonLabel.c_str()).x +
-                            style.ItemSpacing.x * 2.0f);
-      button2Width = (std::max)(
-          button2Width, CherryGUI::CalcTextSize(replaceAllButtonLabel.c_str()).x +
-                            style.ItemSpacing.x * 2.0f);
+      button1Width =
+          (std::max)(button1Width,
+                     CherryGUI::CalcTextSize(replaceButtonLabel.c_str()).x +
+                         style.ItemSpacing.x * 2.0f);
+      button2Width =
+          (std::max)(button2Width,
+                     CherryGUI::CalcTextSize(replaceAllButtonLabel.c_str()).x +
+                         style.ItemSpacing.x * 2.0f);
     }
 
     auto windowHeight =
@@ -4392,7 +4414,8 @@ void TextEditor::renderFindReplace(ImVec2 pos, float width) {
     CherryGUI::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
     CherryGUI::SetNextWindowBgAlpha(0.75f);
 
-    CherryGUI::BeginChild("find-replace", ImVec2(windowWidth, windowHeight), true);
+    CherryGUI::BeginChild("find-replace", ImVec2(windowWidth, windowHeight),
+                          true);
     CherryGUI::SetNextItemWidth(fieldWidth);
 
     if (focusOnFind) {
@@ -4432,13 +4455,15 @@ void TextEditor::renderFindReplace(ImVec2 pos, float width) {
 
     CherryGUI::SameLine();
 
-    if (CherryGUI::Button(findButtonLabel.c_str(), ImVec2(button1Width, 0.0f))) {
+    if (CherryGUI::Button(findButtonLabel.c_str(),
+                          ImVec2(button1Width, 0.0f))) {
       find();
     }
 
     CherryGUI::SameLine();
 
-    if (CherryGUI::Button(findAllButtonLabel.c_str(), ImVec2(button2Width, 0.0f))) {
+    if (CherryGUI::Button(findAllButtonLabel.c_str(),
+                          ImVec2(button2Width, 0.0f))) {
       findAll();
     }
 
@@ -4476,14 +4501,14 @@ void TextEditor::renderFindReplace(ImVec2 pos, float width) {
       }
 
       if (CherryGUI::Button(replaceButtonLabel.c_str(),
-                        ImVec2(button1Width, 0.0f))) {
+                            ImVec2(button1Width, 0.0f))) {
         replace();
       }
 
       CherryGUI::SameLine();
 
       if (CherryGUI::Button(replaceAllButtonLabel.c_str(),
-                        ImVec2(button2Width, 0.0f))) {
+                            ImVec2(button2Width, 0.0f))) {
         replaceAll();
       }
 
@@ -4827,7 +4852,7 @@ static bool renderSuggestion(const std::string_view &suggestion,
   // highlight selected item
   if (selected) {
     CherryGUI::AddRectFilled(drawList, glyphPos, glyphPos + size,
-                            CherryGUI::GetColorU32(ImGuiCol_Header));
+                             CherryGUI::GetColorU32(ImGuiCol_Header));
   }
 
   // process all UTF-8 glyphs in suggestion
@@ -5014,7 +5039,8 @@ bool TextEditor::Autocomplete::render(Document &document, Cursors &cursors,
           }
 
           if (renderSuggestion(state.suggestions[i].c_str(), state.searchTerm,
-                               CherryGUI::GetContentRegionAvail().x, selected)) {
+                               CherryGUI::GetContentRegionAvail().x,
+                               selected)) {
             // user clicked on a suggestion, use it
             currentSelection = i;
             requestDeactivation = true;
