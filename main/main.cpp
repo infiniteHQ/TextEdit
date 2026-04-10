@@ -26,7 +26,7 @@ public:
     this->AddContentBrowserItemIdentifier(ItemIdentifierInterface(
         TextEdit::IsValidFile, "text_edit:superfile", "Super file", "#553333"));
 
-    this->AddCreditsFile(TextEdit::GetPath("CREDITS"));
+    this->SetCreditsFile(TextEdit::GetPath("CREDITS"));
   }
 
   void init_ui() override {
