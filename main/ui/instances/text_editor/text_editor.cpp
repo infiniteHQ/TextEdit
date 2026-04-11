@@ -58,10 +58,6 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
                                          const std::string &name) {
   namespace fs = std::filesystem;
 
-  CherryApp.AddFont(
-      "JetBrainsMono",
-      TextEdit::GetPath("resources/fonts/JetBrainsMono-Regular.ttf"));
-
   m_Type = detect_file(path);
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
 

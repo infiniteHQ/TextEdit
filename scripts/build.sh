@@ -25,6 +25,7 @@ cp -r ../main/assets/* ../dist/$FOLDER_NAME/ 2>/dev/null || true
 cp ../module.json ../dist/$FOLDER_NAME/
 cp ../LICENSE ../dist/$FOLDER_NAME/
 cp ../CREDITS ../dist/$FOLDER_NAME/
+cp -r ../docs ../dist/$FOLDER_NAME/
 cp ../README.md ../dist/$FOLDER_NAME/
 
 rm -rf "../dist/$FOLDER_NAME/CMakeFiles"
