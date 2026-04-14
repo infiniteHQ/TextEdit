@@ -42,12 +42,7 @@ void TextEdit::StartTextEditorInstance(const std::string &path) {
 }
 
 std::string TextEdit::GetPath(const std::string &path) {
-  return CTextEdit->m_interface->GetPath() + "/" + path;
+  return CTextEdit->m_interface->CookPath(path);
 }
 
-void TextEdit::AddDocumentation(const std::string &section,
-                                const std::string &title,
-                                const std::string &path) {
-  std::string topic = "module:" + CTextEdit->m_interface->m_name;
-  VortexMaker::AddDocumentation(topic, section, title, path);
-}
+void TextEdit::Hello() { VortexMaker::LogInfo("Tt", "cc"); }

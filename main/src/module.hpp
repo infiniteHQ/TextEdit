@@ -26,11 +26,8 @@ namespace TextEdit {
 TEXTEDIT_API void CreateContext();
 TEXTEDIT_API void DestroyContext();
 
-// TODO directly as module interface utils
-TEXTEDIT_API void AddDocumentation(const std::string &section,
-                                   const std::string &title,
-                                   const std::string &path);
 TEXTEDIT_API std::string GetPath(const std::string &path);
+TEXTEDIT_API void Hello();
 
 TEXTEDIT_API void StartTextEditorInstance(const std::string &path);
 TEXTEDIT_API bool IsValidFile(const std::string &path);

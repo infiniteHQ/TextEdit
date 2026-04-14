@@ -52,6 +52,8 @@ public:
   void RenderRightMenubar();
   void RenderBottombar();
 
+  void RenderCustomMenu();
+
   std::string get_extension(const std::string &path) {
     size_t dot_pos = path.find_last_of('.');
     if (dot_pos == std::string::npos)

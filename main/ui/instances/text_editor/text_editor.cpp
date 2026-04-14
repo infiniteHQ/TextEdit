@@ -356,8 +356,12 @@ FileTypes TextEditorAppWindow::detect_file(const std::string &path) {
     return FileTypes::File_UNKNOWN;
   }
 }
+void TextEditorAppWindow::RenderCustomMenu() { ImGui::Text("Helo"); }
 
 void TextEditorAppWindow::Render() {
+
+  VortexMaker::PushCustomMenu("TextEdit", [this]() { RenderCustomMenu(); });
+
   CherryApp.PushComponentPool(&m_ComponentPool);
   bool isWindowFocused =
       CherryGUI::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);

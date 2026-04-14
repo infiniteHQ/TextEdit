@@ -27,10 +27,10 @@ public:
         TextEdit::IsValidFile, "text_edit:superfile", "Super file", "#553333"));
 
     this->SetCreditsFile(TextEdit::GetPath("CREDITS"));
-    TextEdit::AddDocumentation("Take the editor", "Edit a txt file",
-                               TextEdit::GetPath("docs/main.md"));
-    TextEdit::AddDocumentation("Take the editor", "Find specific text",
-                               TextEdit::GetPath("docs/main.md"));
+    this->AddDocumentation("Take the editor", "Edit a txt file",
+                           TextEdit::GetPath("docs/main.md"));
+    this->AddDocumentation("Take the editor", "Find specific text",
+                           TextEdit::GetPath("docs/main.md"));
   }
 
   void init_ui() override {
