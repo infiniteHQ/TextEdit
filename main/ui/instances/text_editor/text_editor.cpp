@@ -234,6 +234,7 @@ void TextEditorAppWindow::RefreshFile() {
 void TextEditorAppWindow::SaveFile() {
   m_FileEdited = false;
   m_FileUpdated = true;
+
   try {
     if (m_FilePath.empty()) {
       std::cerr << "SaveFile: no file path set\n";
@@ -356,6 +357,7 @@ FileTypes TextEditorAppWindow::detect_file(const std::string &path) {
     return FileTypes::File_UNKNOWN;
   }
 }
+
 void TextEditorAppWindow::RenderCustomMenu() { ImGui::Text("Helo"); }
 
 void TextEditorAppWindow::Render() {
