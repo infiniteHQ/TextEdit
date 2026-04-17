@@ -8,7 +8,7 @@
 namespace ModuleUI {
 
 void TextEditorAppWindow::PlusMinuxWidget(bool plus) {
-  ImVec2 btn_pos = ImGui::GetCursorScreenPos();
+  ImVec2 btn_pos = CherryGUI::GetCursorScreenPos();
   float btn_size = 22.0f;
   float rounding = 4.0f;
   float bar_thickness = 2.0f;
@@ -19,9 +19,9 @@ void TextEditorAppWindow::PlusMinuxWidget(bool plus) {
   ImVec2 center =
       ImVec2(btn_pos.x + btn_size * 0.5f, btn_pos.y + btn_size * 0.5f);
 
-  ImGui::InvisibleButton("##zoom_in", ImVec2(btn_size, btn_size));
-  bool hovered = ImGui::IsItemHovered();
-  bool clicked = ImGui::IsItemClicked();
+  CherryGUI::InvisibleButton("##zoom_in", ImVec2(btn_size, btn_size));
+  bool hovered = CherryGUI::IsItemHovered();
+  bool clicked = CherryGUI::IsItemClicked();
 
   if (plus) {
     if (clicked)
@@ -31,24 +31,24 @@ void TextEditorAppWindow::PlusMinuxWidget(bool plus) {
       ZoomOut();
   }
 
-  ImDrawList *dl = ImGui::GetWindowDrawList();
+  ImDrawList *dl = CherryGUI::GetWindowDrawList();
 
   ImU32 bg_color =
       hovered ? IM_COL32(80, 80, 80, 255) : IM_COL32(55, 55, 55, 255);
 
-  dl->AddRectFilled(btn_min, btn_max, bg_color, rounding);
+  CherryGUI::AddRectFilled(dl, btn_min, btn_max, bg_color, rounding);
 
-  dl->AddRect(btn_min, btn_max, IM_COL32(120, 120, 120, 180), rounding, 0,
+  CherryGUI::AddRect(dl, btn_min, btn_max, IM_COL32(120, 120, 120, 180), rounding, 0,
               1.0f);
 
   ImU32 fg_color = IM_COL32(220, 220, 220, 255);
 
-  dl->AddRectFilled(
+  CherryGUI::AddRectFilled(dl, 
       ImVec2(center.x - bar_half, center.y - bar_thickness * 0.5f),
       ImVec2(center.x + bar_half, center.y + bar_thickness * 0.5f), fg_color);
 
   if (plus) {
-    dl->AddRectFilled(
+    CherryGUI::AddRectFilled(dl, 
         ImVec2(center.x - bar_thickness * 0.5f, center.y - bar_half),
         ImVec2(center.x + bar_thickness * 0.5f, center.y + bar_half), fg_color);
   }
@@ -358,7 +358,7 @@ FileTypes TextEditorAppWindow::detect_file(const std::string &path) {
   }
 }
 
-void TextEditorAppWindow::RenderCustomMenu() { ImGui::Text("Helo"); }
+void TextEditorAppWindow::RenderCustomMenu() { CherryGUI::Text("Helo"); }
 
 void TextEditorAppWindow::Render() {
 
