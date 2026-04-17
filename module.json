@@ -4,7 +4,7 @@
     "name": "infinitehq.textedit",
     "proper_name": "TextEdit",
     "auto_exec": true,
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "Infinite",
     "contributors": [
         "Diego E. Moreno <d@infinite.si>"

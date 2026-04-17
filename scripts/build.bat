@@ -3,7 +3,6 @@ setlocal enabledelayedexpansion
 
 rd /s /q ..\dist 2>nul
 rd /s /q ..\build 2>nul
-call build_vx.bat
 rd /s /q ..\lib\vortex\tests\project\.vx\modules\ 2>nul
 mkdir ..\build
 cd ..\build
@@ -24,7 +23,6 @@ set FOLDER_NAME=%NAME%-%VERSION%
 mkdir "..\dist\%FOLDER_NAME%"
 
 xcopy /e /i /y "..\build\Release\*" "..\dist\%FOLDER_NAME%\" 2>nul
-xcopy /e /i /y "..\lib" "..\dist\%FOLDER_NAME%\lib\" 2>nul
 xcopy /e /i /y "..\main\assets\*" "..\dist\%FOLDER_NAME%\" 2>nul
 copy "..\module.json" "..\dist\%FOLDER_NAME%\" 2>nul
 copy "..\LICENSE" "..\dist\%FOLDER_NAME%\" 2>nul
@@ -35,7 +33,6 @@ rd /s /q "..\dist\%FOLDER_NAME%\CMakeFiles" 2>nul
 rd /s /q "..\dist\%FOLDER_NAME%\scripts" 2>nul
 rd /s /q "..\dist\%FOLDER_NAME%\.git" 2>nul
 rd /s /q "..\dist\%FOLDER_NAME%\.vscode" 2>nul
-rd /s /q "..\dist\%FOLDER_NAME%\lib" 2>nul
 del "..\dist\%FOLDER_NAME%\remove_resources_if_exists.cmake" 2>nul
 del "..\dist\%FOLDER_NAME%\cmake_install.cmake" 2>nul
 del "..\dist\%FOLDER_NAME%\CMakeCache.txt" 2>nul
