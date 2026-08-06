@@ -35,8 +35,6 @@ TEXTEDIT_API std::shared_ptr<TextEdit::Context> get_current_context();
 
 TEXTEDIT_API std::string get_path(const std::string &path);
 
-TEXTEDIT_API void Hello();
-
 TEXTEDIT_API void StartTextEditorInstance(const std::string &path);
 TEXTEDIT_API bool IsValidFile(const std::string &path);
 
