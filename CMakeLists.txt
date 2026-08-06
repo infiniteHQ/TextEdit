@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
-    add_compile_options(/utf-8)
+    add_compile_options(/utf-8 /Zi /Od /Ob0)
+    add_link_options(/DEBUG /PDB:module.pdb)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC")
 endif()
@@ -31,8 +32,11 @@ target_compile_options(module PRIVATE -Wall -Wextra)
 endif()
 
 target_link_libraries(module PRIVATE ${VORTEX_SHARED_LIBRARY})
-target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/vxcore/include/)
-target_include_directories(module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/)
+target_include_directories(module PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/
+${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/vxcore/include/
+${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/lib/cherry
+)
 
 if(WIN32)
     target_compile_definitions(module PRIVATE
@@ -47,7 +51,7 @@ if(WIN32)
             ${CMAKE_CURRENT_SOURCE_DIR}/lib/vortex/build/prod/Debug
     )
     if(NOT CHERRY_IMPORT_LIB)
-        message(FATAL_ERROR "cherry.lib introuvable, rebuilde vortex d'abord!")
+        message(FATAL_ERROR "cherry.lib not builded, please build Vortex before")
     endif()
     target_link_libraries(module PRIVATE ${CHERRY_IMPORT_LIB})
 endif()
@@ -64,6 +68,13 @@ foreach(OUTPUTCONFIG Debug Release RelWithDebInfo MinSizeRel)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/bin/${OUTPUTCONFIG})
 endforeach()
 
+if(WIN32)
+set_target_properties(module PROPERTIES
+    COMPILE_PDB_NAME "module"
+    COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>"
+)
+endif()
+
 # Script to remove existing resources
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/remove_resources_if_exists.cmake
 "if(EXISTS \"${CMAKE_BINARY_DIR}/bin/$<CONFIG>/resources\")\n"
@@ -71,7 +82,8 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/remove_resources_if_exists.cmake
 "endif()\n"
 )
 
-# Custom target to sync assets
+# Custom target to sync assets (and pdb files for Windows)
+if(WIN32)
 add_custom_target(sync_assets_editor ALL
     COMMAND ${CMAKE_COMMAND} -E echo "Synchronizing assets..."
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/remove_resources_if_exists.cmake
@@ -81,3 +93,14 @@ add_custom_target(sync_assets_editor ALL
     COMMAND ${CMAKE_COMMAND} -E echo "Assets synchronized."
     DEPENDS ${ASSET_FILES} module
 )
+else()
+add_custom_target(sync_assets_editor ALL
+    COMMAND ${CMAKE_COMMAND} -E echo "Synchronizing assets..."
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/remove_resources_if_exists.cmake
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/main/assets
+        $<TARGET_FILE_DIR:module>/
+    COMMAND ${CMAKE_COMMAND} -E echo "Assets synchronized."
+    DEPENDS ${ASSET_FILES} module
+)
+endif()

@@ -94,7 +94,6 @@ public:
   }
 
 private:
-  VxContext *ctx;
   bool opened;
   std::string m_FileEditBuffer;
   std::string m_FilePath;

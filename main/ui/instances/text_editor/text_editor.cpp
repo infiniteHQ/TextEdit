@@ -38,18 +38,18 @@ void TextEditorAppWindow::PlusMinuxWidget(bool plus) {
 
   CherryGUI::AddRectFilled(dl, btn_min, btn_max, bg_color, rounding);
 
-  CherryGUI::AddRect(dl, btn_min, btn_max, IM_COL32(120, 120, 120, 180), rounding, 0,
-              1.0f);
+  CherryGUI::AddRect(dl, btn_min, btn_max, IM_COL32(120, 120, 120, 180),
+                     rounding, 0, 1.0f);
 
   ImU32 fg_color = IM_COL32(220, 220, 220, 255);
 
-  CherryGUI::AddRectFilled(dl, 
-      ImVec2(center.x - bar_half, center.y - bar_thickness * 0.5f),
+  CherryGUI::AddRectFilled(
+      dl, ImVec2(center.x - bar_half, center.y - bar_thickness * 0.5f),
       ImVec2(center.x + bar_half, center.y + bar_thickness * 0.5f), fg_color);
 
   if (plus) {
-    CherryGUI::AddRectFilled(dl, 
-        ImVec2(center.x - bar_thickness * 0.5f, center.y - bar_half),
+    CherryGUI::AddRectFilled(
+        dl, ImVec2(center.x - bar_thickness * 0.5f, center.y - bar_half),
         ImVec2(center.x + bar_thickness * 0.5f, center.y + bar_half), fg_color);
   }
 }
@@ -62,7 +62,7 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
   m_AppWindow = std::make_shared<Cherry::AppWindow>(name, name);
 
   // TODO : Or load custom icons for each file types
-  m_AppWindow->SetIcon(TextEdit::GetPath("resources/icons/edit.png"));
+  m_AppWindow->SetIcon(TextEdit::get_path("resources/icons/edit.png"));
   m_AppWindow->SetLeftMenubarCallback([this]() { RenderMenubar(); });
   m_AppWindow->SetRightMenubarCallback([this]() { RenderRightMenubar(); });
   m_AppWindow->SetLeftBottombarCallback([this]() { RenderBottombar(); });
@@ -77,8 +77,6 @@ TextEditorAppWindow::TextEditorAppWindow(const std::string &path,
   m_FilePath = path;
 
   RefreshFile();
-
-  this->ctx = VortexMaker::GetCurrentContext();
 }
 
 std::string TextEditorAppWindow::GetFileTypeStr(FileTypes type) {
@@ -154,7 +152,7 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("size_x", "18");
   CherryNextComponent.SetProperty("size_y", "18");
   if (CherryKit::ButtonImage(
-          TextEdit::GetPath("/resources/icons/icon_save.png"))
+          TextEdit::get_path("/resources/icons/icon_save.png"))
           .GetDataAs<bool>("isClicked")) {
     m_SavePending = true;
   }
@@ -168,7 +166,7 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("size_x", "18");
   CherryNextComponent.SetProperty("size_y", "18");
   if (CherryKit::ButtonImage(
-          TextEdit::GetPath("/resources/icons/icon_refresh.png"))
+          TextEdit::get_path("/resources/icons/icon_refresh.png"))
           .GetDataAs<bool>("isClicked")) {
     m_RefreshReady = true;
   }
@@ -179,7 +177,7 @@ void TextEditorAppWindow::RenderMenubar() {
   CherryNextComponent.SetProperty("padding_x", "10.0f");
   if (CherryKit::ButtonImageText(
           "Find",
-          TextEdit::GetPath("/resources/icons/icon_magnifying_glass.png"))
+          TextEdit::get_path("/resources/icons/icon_magnifying_glass.png"))
           .GetDataAs<bool>("isClicked")) {
     m_FindPending = true;
   }
@@ -362,7 +360,7 @@ void TextEditorAppWindow::RenderCustomMenu() { CherryGUI::Text("Helo"); }
 
 void TextEditorAppWindow::Render() {
 
-  VortexMaker::PushCustomMenu("TextEdit", [this]() { RenderCustomMenu(); });
+  vxe::push_custom_menu("TextEdit", [this]() { RenderCustomMenu(); });
 
   CherryApp.PushComponentPool(&m_ComponentPool);
   bool isWindowFocused =

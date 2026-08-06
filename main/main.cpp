@@ -1,36 +1,31 @@
 #include "./src/module.hpp"
 
-#ifndef CTextEdit
-TextEdit::Context *CTextEdit = NULL;
-#endif
-
-class Module : public ModuleInterface {
+class infinitehq_textedit : public ModuleInterface {
 public:
+  std::shared_ptr<TextEdit::Context> ctx;
   void execute() override {
-    // Create the context pointer of this module
-    TextEdit::CreateContext();
+    ctx = TextEdit::create_context();
 
-    // Get the interface pointer
-    CTextEdit->m_interface =
-        ModuleInterface::GetEditorModuleByName(this->m_name);
+    auto m = ModuleInterface::get_editor_module_by_name(this->name());
+    TextEdit::get_current_context()->m_interface = m;
 
     // Add item handler for simple txt files
-    this->AddContentBrowserItemHandler(ItemHandlerInterface(
+    this->add_content_browser_item_handler(ItemHandlerInterface(
         "file_txt", TextEdit::StartTextEditorInstance, "Edit",
-        "Edit this txt file", TextEdit::GetPath("resources/icons/edit.png")));
+        "Edit this txt file", TextEdit::get_path("resources/icons/edit.png")));
 
-    this->AddContentBrowserItemHandler(ItemHandlerInterface(
+    this->add_content_browser_item_handler(ItemHandlerInterface(
         "text_edit:superfile", TextEdit::StartTextEditorInstance, "Super Edit",
-        "Edit this txt file", TextEdit::GetPath("resources/icons/edit.png")));
+        "Edit this txt file", TextEdit::get_path("resources/icons/edit.png")));
 
-    this->AddContentBrowserItemIdentifier(ItemIdentifierInterface(
+    this->add_content_browser_item_identifier(ItemIdentifierInterface(
         TextEdit::IsValidFile, "text_edit:superfile", "Super file", "#553333"));
 
-    this->SetCreditsFile(TextEdit::GetPath("CREDITS"));
-    this->AddDocumentation("Take the editor", "Edit a txt file",
-                           TextEdit::GetPath("docs/main.md"));
-    this->AddDocumentation("Take the editor", "Find specific text",
-                           TextEdit::GetPath("docs/main.md"));
+    this->set_credits_file(TextEdit::get_path("CREDITS"));
+    this->add_documentation("Take the editor", "Edit a txt file",
+                            TextEdit::get_path("docs/main.md"));
+    this->add_documentation("Take the editor", "Find specific text",
+                            TextEdit::get_path("docs/main.md"));
   }
 
   void init_ui() override {
@@ -41,22 +36,21 @@ public:
 
   void destroy() override {
     // Reset module
-    this->ResetModule();
+    this->reset_module();
 
     // Clear windows
-    for (auto i : CTextEdit->m_text_editor_instances) {
+    for (auto i : TextEdit::get_current_context()->m_text_editor_instances) {
       CherryApp.DeleteAppWindow(i->GetAppWindow());
     }
 
-    // Clear context
-    // DestroyContext();
+    ctx.reset();
   }
 };
 
 #ifdef _WIN32
 extern "C" __declspec(dllexport) ModuleInterface *create_em() {
-  return new Module();
+  return new infinitehq_textedit();
 }
 #else
-extern "C" ModuleInterface *create_em() { return new Module(); }
+extern "C" ModuleInterface *create_em() { return new infinitehq_textedit(); }
 #endif

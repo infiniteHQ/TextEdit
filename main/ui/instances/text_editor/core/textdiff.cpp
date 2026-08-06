@@ -12,10 +12,6 @@
 
 #include <cmath>
 
-#include "../../../../../lib/vortex/lib/cherry/cherry.hpp"
-#include "../../../../../lib/vortex/lib/cherry/platform/engine/app/app.hpp"
-#include "../../../../../lib/vortex/lib/cherry/platform/engine/components/components.hpp"
-
 #include <vxcore/include/vortex.h>
 #include <vxcore/include/vortex_internals.h>
 
@@ -182,22 +178,23 @@ void TextDiff::decorateLine(TextEditor::Decorator &decorator) {
   auto &line = lineInfo[decorator.line];
   auto lineLeft = static_cast<int>(line.leftLine + 1);
   auto lineRight = static_cast<int>(line.rightLine + 1);
-  auto color = CherryGUI::ColorConvertU32ToFloat4(palette.get(Color::lineNumber));
+  auto color =
+      CherryGUI::ColorConvertU32ToFloat4(palette.get(Color::lineNumber));
 
   switch (line.status) {
   case LineStatus::common:
     CherryGUI::TextColored(color, " %*d %*d  ", leftLineNumberDigits, lineLeft,
-                       rightLineNumberDigits, lineRight);
+                           rightLineNumberDigits, lineRight);
     break;
 
   case LineStatus::added:
     CherryGUI::TextColored(color, " %*s %*d +", leftLineNumberDigits, "",
-                       rightLineNumberDigits, lineRight);
+                           rightLineNumberDigits, lineRight);
     break;
 
   case LineStatus::deleted:
     CherryGUI::TextColored(color, " %*d %*s -", leftLineNumberDigits, lineLeft,
-                       rightLineNumberDigits, "");
+                           rightLineNumberDigits, "");
     break;
   }
 }
@@ -230,21 +227,21 @@ void TextDiff::renderSideBySide(const char *title, const ImVec2 &size,
     case Scroll::alignTop:
       CherryGUI::SetNextWindowScroll(
           ImVec2(0.0f, (std::max)(0.0f, static_cast<float>(scrollToLineNumber) *
-                                          glyphSize.y)));
+                                            glyphSize.y)));
       break;
 
     case Scroll::alignMiddle:
       CherryGUI::SetNextWindowScroll(
           ImVec2(0.0f, (std::max)(0.0f, static_cast<float>(scrollToLineNumber -
-                                                         visibleLines / 2) *
-                                          glyphSize.y)));
+                                                           visibleLines / 2) *
+                                            glyphSize.y)));
       break;
 
     case Scroll::alignBottom:
       CherryGUI::SetNextWindowScroll(
           ImVec2(0.0f, (std::max)(0.0f, static_cast<float>(scrollToLineNumber -
-                                                         (visibleLines - 1)) *
-                                          glyphSize.y)));
+                                                           (visibleLines - 1)) *
+                                            glyphSize.y)));
       break;
     }
 
@@ -258,14 +255,16 @@ void TextDiff::renderSideBySide(const char *title, const ImVec2 &size,
   }
 
   // start rendering the widget
-  CherryGUI::SetNextWindowContentSize(ImVec2(0.0f, glyphSize.y * lineInfo.size()));
+  CherryGUI::SetNextWindowContentSize(
+      ImVec2(0.0f, glyphSize.y * lineInfo.size()));
   CherryGUI::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-  CherryGUI::PushStyleColor(ImGuiCol_ChildBg, CherryGUI::ColorConvertU32ToFloat4(
-                                              palette.get(Color::background)));
+  CherryGUI::PushStyleColor(
+      ImGuiCol_ChildBg,
+      CherryGUI::ColorConvertU32ToFloat4(palette.get(Color::background)));
   CherryGUI::BeginChild(title, size, border,
-                    ImGuiWindowFlags_NoMove |
-                        ImGuiWindowFlags_HorizontalScrollbar |
-                        ImGuiWindowFlags_NoNavInputs);
+                        ImGuiWindowFlags_NoMove |
+                            ImGuiWindowFlags_HorizontalScrollbar |
+                            ImGuiWindowFlags_NoNavInputs);
 
   auto cursorScreenPos = CherryGUI::GetCursorScreenPos();
   auto visibleSize = CherryGUI::GetCurrentWindow()->Rect().GetSize();
@@ -292,12 +291,13 @@ void TextDiff::renderSideBySide(const char *title, const ImVec2 &size,
       (std::max)(static_cast<int>(std::floor(textScroll / glyphSize.x)), 0);
   lastVisibleColumn = static_cast<int>(
       std::floor((textScroll + textColumnWidth) / glyphSize.x));
-  firstVisibleLine = (std::max)(
-      static_cast<int>(std::floor(CherryGUI::GetScrollY() / glyphSize.y)), 0);
+  firstVisibleLine = (std::max)(static_cast<int>(std::floor(
+                                    CherryGUI::GetScrollY() / glyphSize.y)),
+                                0);
   lastVisibleLine =
       (std::min)(static_cast<int>(std::floor(
-                   (CherryGUI::GetScrollY() + visibleSize.y) / glyphSize.y)),
-               static_cast<int>(lineInfo.size() - 1));
+                     (CherryGUI::GetScrollY() + visibleSize.y) / glyphSize.y)),
+                 static_cast<int>(lineInfo.size() - 1));
 
   renderSideBySideBackground();
   renderSideBySideText();
@@ -328,22 +328,22 @@ void TextDiff::renderSideBySideBackground() {
     case LineStatus::common:
       snprintf(buffer, sizeof(buffer), " %*d", leftLineNumberDigits, lineLeft);
       CherryGUI::AddText(drawList, ImVec2(leftLineNumberPos, y),
-                        palette.get(Color::lineNumber), buffer);
+                         palette.get(Color::lineNumber), buffer);
       snprintf(buffer, sizeof(buffer), " %*d", rightLineNumberDigits,
                lineRight);
       CherryGUI::AddText(drawList, ImVec2(rightLineNumberPos, y),
-                        palette.get(Color::lineNumber), buffer);
+                         palette.get(Color::lineNumber), buffer);
       break;
 
     case LineStatus::added:
       snprintf(buffer, sizeof(buffer), " %*d +", rightLineNumberDigits,
                lineRight);
       CherryGUI::AddText(drawList, ImVec2(rightLineNumberPos, y),
-                        palette.get(Color::lineNumber), buffer);
+                         palette.get(Color::lineNumber), buffer);
 
       CherryGUI::AddRectFilled(drawList, ImVec2(rightTextPos, y),
-                              ImVec2(rightTextEnd, y + glyphSize.y),
-                              addedColor);
+                               ImVec2(rightTextEnd, y + glyphSize.y),
+                               addedColor);
 
       break;
 
@@ -351,11 +351,11 @@ void TextDiff::renderSideBySideBackground() {
       snprintf(buffer, sizeof(buffer), " %*d -", leftLineNumberDigits,
                lineLeft);
       CherryGUI::AddText(drawList, ImVec2(leftLineNumberPos, y),
-                        palette.get(Color::lineNumber), buffer);
+                         palette.get(Color::lineNumber), buffer);
 
       CherryGUI::AddRectFilled(drawList, ImVec2(leftTextPos, y),
-                              ImVec2(rightLineNumberPos, y + glyphSize.y),
-                              deletedColor);
+                               ImVec2(rightLineNumberPos, y + glyphSize.y),
+                               deletedColor);
 
       break;
     }
@@ -377,7 +377,7 @@ void TextDiff::renderSideBySideText() {
 
   // render left text
   CherryGUI::PushClipRect(drawList, ImVec2(leftTextPos, yTop),
-                         ImVec2(rightLineNumberPos, yBottom), false);
+                          ImVec2(rightLineNumberPos, yBottom), false);
 
   for (auto i = firstVisibleLine; i <= lastVisibleLine; i++) {
     auto &line = lineInfo[i];
@@ -398,7 +398,7 @@ void TextDiff::renderSideBySideText() {
 
   // render right text
   CherryGUI::PushClipRect(drawList, ImVec2(rightTextPos, yTop),
-                         ImVec2(rightTextEnd, yBottom), false);
+                          ImVec2(rightTextEnd, yBottom), false);
 
   for (auto i = firstVisibleLine; i <= lastVisibleLine; i++) {
     auto &line = lineInfo[i];
@@ -459,13 +459,13 @@ void TextDiff::renderSideBySideLine(float x, float y, TextEditor::Line &line) {
       if (showSpaces) {
         const auto x1 = glyphPos.x + glyphSize.x * 0.5f;
         const auto y1 = glyphPos.y + fontSize * 0.5f;
-       CherryGUI::AddCircleFilled(drawList, ImVec2(x1, y1), 1.5f,
-                                  palette.get(Color::whitespace), 4);
+        CherryGUI::AddCircleFilled(drawList, ImVec2(x1, y1), 1.5f,
+                                   palette.get(Color::whitespace), 4);
       }
 
     } else {
-      CherryGUI::RenderChar(font, drawList, fontSize, glyphPos, palette.get(glyph.color),
-                       codepoint);
+      CherryGUI::RenderChar(font, drawList, fontSize, glyphPos,
+                            palette.get(glyph.color), codepoint);
     }
 
     index++;
@@ -491,7 +491,7 @@ void TextDiff::renderSideBySideTextScrollbars() {
 
     auto textScrollbarTop =
         (std::max)(outerRect.Min.y + borderSize,
-                 outerRect.Max.y - borderSize - scrollbarSize);
+                   outerRect.Max.y - borderSize - scrollbarSize);
     ImRect leftScrollbarFrame(leftTextPos, textScrollbarTop, rightLineNumberPos,
                               textScrollbarTop + scrollbarSize);
     ImRect rightScrollbarFrame(rightTextPos, textScrollbarTop, rightTextEnd,
@@ -506,8 +506,8 @@ void TextDiff::renderSideBySideTextScrollbars() {
     }
 
     if (CherryGUI::ScrollbarEx(
-            rightScrollbarFrame, CherryGUI::GetID("rightTextScroll"), ImGuiAxis_X,
-            &scroll, static_cast<ImS64>(visibleColumnsWidth),
+            rightScrollbarFrame, CherryGUI::GetID("rightTextScroll"),
+            ImGuiAxis_X, &scroll, static_cast<ImS64>(visibleColumnsWidth),
             static_cast<ImS64>(maxColumnsWidth), ImDrawFlags_RoundCornersAll)) {
       textScroll = static_cast<float>(scroll);
     }
@@ -522,7 +522,7 @@ void TextDiff::renderSideBySideTextScrollbars() {
 
       } else if (CherryGUI::IsKeyPressed(ImGuiKey_RightArrow)) {
         textScroll = (std::min)(textScroll + glyphSize.x,
-                              maxColumnsWidth - visibleColumnsWidth);
+                                maxColumnsWidth - visibleColumnsWidth);
 
       } else if (CherryGUI::IsKeyPressed(ImGuiKey_Home)) {
         textScroll = 0.0f;
@@ -539,7 +539,8 @@ void TextDiff::renderSideBySideTextScrollbars() {
         CherryGUI::SetScrollY(0.0f);
 
       } else {
-        CherryGUI::SetScrollY((std::max)(CherryGUI::GetScrollY() - glyphSize.y, 0.0f));
+        CherryGUI::SetScrollY(
+            (std::max)(CherryGUI::GetScrollY() - glyphSize.y, 0.0f));
       }
 
     } else if (CherryGUI::IsKeyPressed(ImGuiKey_DownArrow)) {
@@ -548,17 +549,18 @@ void TextDiff::renderSideBySideTextScrollbars() {
 
       } else {
         CherryGUI::SetScrollY((std::min)(CherryGUI::GetScrollY() + glyphSize.y,
-                                   CherryGUI::GetScrollMaxY()));
+                                         CherryGUI::GetScrollMaxY()));
       }
 
     } else if (CherryGUI::IsKeyPressed(ImGuiKey_PageUp)) {
-      CherryGUI::SetScrollY((std::max)(
-          CherryGUI::GetScrollY() - (visibleLines - 2) * glyphSize.y, 0.0f));
+      CherryGUI::SetScrollY(
+          (std::max)(CherryGUI::GetScrollY() - (visibleLines - 2) * glyphSize.y,
+                     0.0f));
 
     } else if (CherryGUI::IsKeyPressed(ImGuiKey_PageDown)) {
       CherryGUI::SetScrollY(
           (std::min)(CherryGUI::GetScrollY() + (visibleLines - 2) * glyphSize.y,
-                   CherryGUI::GetScrollMaxY()));
+                     CherryGUI::GetScrollMaxY()));
     }
   }
 }
@@ -591,7 +593,7 @@ void TextDiff::renderSideBySideMiniMap() {
               (line.status == LineStatus::added) ? addedColor : deletedColor;
           auto ly = std::round(rect.Min.y + i * lineHeight);
           CherryGUI::AddRectFilled(drawList, ImVec2(left, ly),
-                                  ImVec2(right, ly + lineHeight), color);
+                                   ImVec2(right, ly + lineHeight), color);
         }
       }
 

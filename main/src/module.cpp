@@ -1,11 +1,33 @@
 #include "module.hpp"
 
-void TextEdit::CreateContext() {
-  TextEdit::Context *ctx = VX_NEW(TextEdit::Context);
+// runtime pointer
+#ifndef CTextEdit
+std::weak_ptr<TextEdit::Context> CTextEdit;
+#endif
+
+std::shared_ptr<TextEdit::Context> TextEdit::create_context() {
+  auto ctx = std::make_shared<TextEdit::Context>();
+
+  set_current_context(ctx);
+
+  return ctx;
+}
+
+void TextEdit::destroy_context(std::shared_ptr<TextEdit::Context> ctx) {
+  set_current_context(nullptr);
+}
+
+void TextEdit::set_current_context(std::shared_ptr<TextEdit::Context> ctx) {
   CTextEdit = ctx;
 }
 
-void TextEdit::DestroyContext() { VX_FREE(CTextEdit); }
+std::shared_ptr<TextEdit::Context> TextEdit::get_current_context() {
+  return CTextEdit.lock();
+}
+
+std::string TextEdit::get_path(const std::string &path) {
+  return get_current_context()->m_interface->cook_path(path);
+}
 
 bool TextEdit::IsValidFile(const std::string &path) {
   namespace fs = std::filesystem;
@@ -34,15 +56,11 @@ void TextEdit::StartTextEditorInstance(const std::string &path) {
 
   std::string window_name =
       filename + "####" +
-      std::to_string(CTextEdit->m_text_editor_instances.size());
+      std::to_string(get_current_context()->m_text_editor_instances.size());
 
   auto inst = ModuleUI::TextEditorAppWindow::Create(path, window_name);
   Cherry::AddAppWindow(inst->GetAppWindow());
-  CTextEdit->m_text_editor_instances.push_back(inst);
+  get_current_context()->m_text_editor_instances.push_back(inst);
 }
 
-std::string TextEdit::GetPath(const std::string &path) {
-  return CTextEdit->m_interface->CookPath(path);
-}
-
-void TextEdit::Hello() { VortexMaker::LogInfo("Tt", "cc"); }
+void TextEdit::Hello() { vxe::log_info("Tt", "cc"); }

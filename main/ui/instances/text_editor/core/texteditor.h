@@ -24,11 +24,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include "../../../../../lib/vortex/lib/cherry/cherry.hpp"
-#include "../../../../../lib/vortex/lib/cherry/platform/engine/app/app.hpp"
-#include "../../../../../lib/vortex/lib/cherry/platform/engine/components/components.hpp"
-
 #include <vxcore/include/vortex.h>
 #include <vxcore/include/vortex_internals.h>
 
