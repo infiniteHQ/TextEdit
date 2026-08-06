@@ -42,7 +42,7 @@ public:
       CherryApp.DeleteAppWindow(i->GetAppWindow());
     }
 
-    TestCPP::destroy_context(ctx);
+    TextEdit::destroy_context(ctx);
     ctx.reset();
   }
 };
