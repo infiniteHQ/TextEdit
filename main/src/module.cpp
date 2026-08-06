@@ -60,7 +60,14 @@ void TextEdit::StartTextEditorInstance(const std::string &path) {
 
   auto inst = ModuleUI::TextEditorAppWindow::Create(path, window_name);
   Cherry::AddAppWindow(inst->GetAppWindow());
-  get_current_context()->m_text_editor_instances.push_back(inst);
+  TextEdit::get_current_context()->m_text_editor_instances.push_back(inst);
 }
 
 void TextEdit::Hello() { vxe::log_info("Tt", "cc"); }
+
+void TextEdit::oe_save_all() {
+  for (auto &editor :
+       TextEdit::get_current_context()->m_text_editor_instances) {
+    editor->m_SavePending = true;
+  }
+}

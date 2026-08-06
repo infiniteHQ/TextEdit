@@ -52,8 +52,6 @@ public:
   void RenderRightMenubar();
   void RenderBottombar();
 
-  void RenderCustomMenu();
-
   std::string get_extension(const std::string &path) {
     size_t dot_pos = path.find_last_of('.');
     if (dot_pos == std::string::npos)
@@ -93,6 +91,8 @@ public:
     m_TextSize = 0.50f; // 100%
   }
 
+  bool m_SavePending = false;
+
 private:
   bool opened;
   std::string m_FileEditBuffer;
@@ -103,7 +103,6 @@ private:
   bool m_FindPending = false;
   bool m_UndoPending = false;
   bool m_RedoPending = false;
-  bool m_SavePending = false;
   bool m_CopyPending = false;
   bool m_PastePending = false;
   bool m_FileEdited = true;

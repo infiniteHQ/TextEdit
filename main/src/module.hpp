@@ -39,6 +39,8 @@ TEXTEDIT_API void Hello();
 
 TEXTEDIT_API void StartTextEditorInstance(const std::string &path);
 TEXTEDIT_API bool IsValidFile(const std::string &path);
+
+TEXTEDIT_API void oe_save_all();
 } // namespace TextEdit
 
 #endif // TEXT_EDIT_HPP

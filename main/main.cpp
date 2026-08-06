@@ -22,10 +22,9 @@ public:
         TextEdit::IsValidFile, "text_edit:superfile", "Super file", "#553333"));
 
     this->set_credits_file(TextEdit::get_path("CREDITS"));
-    this->add_documentation("Take the editor", "Edit a txt file",
-                            TextEdit::get_path("docs/main.md"));
-    this->add_documentation("Take the editor", "Find specific text",
-                            TextEdit::get_path("docs/main.md"));
+
+    this->add_output_event(
+        ModuleOutputEvent(TextEdit::oe_save_all, "save_all"));
   }
 
   void init_ui() override {
