@@ -18,7 +18,16 @@ cd ..\scripts
 set MODULE_JSON_PATH=..\module.json
 for /f "delims=" %%i in ('powershell -command "(Get-Content '%MODULE_JSON_PATH%' | ConvertFrom-Json).name"') do set NAME=%%i
 for /f "delims=" %%i in ('powershell -command "(Get-Content '%MODULE_JSON_PATH%' | ConvertFrom-Json).version"') do set VERSION=%%i
-set FOLDER_NAME=%NAME%-%VERSION%
+
+if /i "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
+    set ARCH_SUFFIX=winarm
+) else if /i "%PROCESSOR_ARCHITEW6432%"=="ARM64" (
+    set ARCH_SUFFIX=winarm
+) else (
+    set ARCH_SUFFIX=win64
+)
+
+set FOLDER_NAME=%NAME%-%VERSION%-%ARCH_SUFFIX%
 
 mkdir "..\dist\%FOLDER_NAME%"
 

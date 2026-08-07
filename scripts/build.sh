@@ -2,6 +2,7 @@
 
 rm -rf ../dist
 rm -rf ../build
+
 rm -rf ../lib/vortex/tests/project/.vx/modules/
 mkdir -p ../build
 cd ../build
@@ -12,7 +13,21 @@ make
 MODULE_JSON_PATH="../module.json"
 NAME=$(jq -r .name $MODULE_JSON_PATH)
 VERSION=$(jq -r .version $MODULE_JSON_PATH)
-FOLDER_NAME="$NAME-$VERSION"
+ARCH=$(uname -m)
+case "$ARCH" in
+    x86_64)
+        ARCH_SUFFIX="linux64"
+        ;;
+    aarch64|arm64)
+        ARCH_SUFFIX="linuxarm"
+        ;;
+    *)
+        echo "Unknown arch: $ARCH"
+        exit 1
+        ;;
+esac
+
+FOLDER_NAME="$NAME-$VERSION-$ARCH_SUFFIX"
 
 mkdir -p "../dist/$FOLDER_NAME"
 
